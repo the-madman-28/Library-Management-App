@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}All Employees{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="page-header">
+
+        <div>
+            <h1>
+                All Employees
+            </h1>
+        </div>
+
+
+        <a
+            href="{{ url_for('main.index') }}"
+            class="btn btn-light"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         EMPLOYEE DIRECTORY
+    ====================================================== -->
+
+    <div class="dashboard-panel readonly-panel">
+
+        <div class="readonly-panel-header">
+
+            <div>
+
+                <h2>
+                    Employee Directory
+                </h2>
+
+                <p>
+
+                    {% if search_query %}
+
+                        Search results for
+                        <strong>
+                            "{{ search_query }}"
+                        </strong>
+
+                    {% else %}
+
+                        {{ employees|length }} employee(s)
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 SEARCH
+            ================================================== -->
+
+            <form
+                method="GET"
+                class="table-search-form"
+            >
+
+                <div class="table-search-box">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        name="q"
+                        value="{{ search_query or '' }}"
+                        placeholder="Search employees..."
+                        autocomplete="off"
+                    >
+
+                    {% if search_query %}
+
+                    <a
+                        href="{{ request.path }}"
+                        class="table-search-clear"
+                        title="Clear search"
+                    >
+                        <i class="bi bi-x"></i>
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-search"></i>
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- =====================================================
+             EMPLOYEE TABLE
+        ====================================================== -->
+
+        {% if employees %}
+
+        <div class="readonly-table-wrapper">
+
+            <table class="readonly-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Employee Code
+                        </th>
+
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Department
+                        </th>
+
+                        <th>
+                            Designation
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for employee in employees %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ employee.employee_code }}
+                            </strong>
+                        </td>
+
+
+                        <td>
+                            <strong>
+                                {{ employee.name }}
+                            </strong>
+                        </td>
+
+
+                        <td>
+                            {{ employee.department or "—" }}
+                        </td>
+
+
+                        <td>
+                            {{ employee.designation or "—" }}
+                        </td>
+
+
+                        <td>
+                            {{ employee.email or "—" }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+
+        <!-- =====================================================
+             EMPTY SEARCH STATE
+        ====================================================== -->
+
+        {% if search_query %}
+
+        <div class="readonly-empty">
+
+            <i class="bi bi-search"></i>
+
+            <strong>
+                No Employees Found
+            </strong>
+
+            <span>
+                No employees matched
+                <strong>
+                    "{{ search_query }}"
+                </strong>.
+            </span>
+
+            <a
+                href="{{ request.path }}"
+                class="btn btn-light mt-3"
+            >
+                <i class="bi bi-x-circle"></i>
+                Clear Search
+            </a>
+
+        </div>
+
+
+        {% else %}
+
+
+        <!-- =====================================================
+             NORMAL EMPTY STATE
+        ====================================================== -->
+
+        <div class="readonly-empty">
+
+            <i class="bi bi-people"></i>
+
+            <strong>
+                No Employees Found
+            </strong>
+
+            <span>
+                There are currently no employees in the system.
+            </span>
+
+        </div>
+
+        {% endif %}
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,8 @@
+/* Master stylesheet: link only this file from base.html. */
+@import url("./variables.css");
+@import url("./base.css");
+@import url("./layout.css");
+@import url("./dashboard.css");
+@import url("./tables.css");
+@import url("./cards.css");
+@import url("./responsive.css");

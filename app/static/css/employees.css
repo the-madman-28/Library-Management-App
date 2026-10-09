@@ -1,0 +1,422 @@
+/* =========================================================
+   EMPLOYEES PAGE
+   ========================================================= */
+
+.employees-page {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.employees-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.employees-add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 11px 18px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #0d6efd;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.employees-add-button:hover {
+    background: #0b5ed7;
+    color: #ffffff;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 5px 14px rgba(13, 110, 253, 0.22);
+}
+
+.employees-add-button i {
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   EMPLOYEES TABLE
+   ========================================================= */
+
+.employees-table {
+    min-width: 1050px;
+}
+
+
+/* =========================================================
+   EMPLOYEE CODE
+   ========================================================= */
+
+.employee-code-badge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 5px 9px;
+
+    border-radius: 7px;
+
+    background: #f1f5f9;
+    color: #334155;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   EMPLOYEE NAME
+   ========================================================= */
+
+.employee-table-name {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.employee-table-name strong {
+    color: #1e293b;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.employee-table-name span {
+    color: #64748b;
+
+    font-size: 12px;
+
+    max-width: 220px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   DEPARTMENT
+   ========================================================= */
+
+.employee-department-badge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 5px 9px;
+
+    border-radius: 6px;
+
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+
+    color: #475569;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   MUTED TABLE TEXT
+   ========================================================= */
+
+.table-muted {
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   CONTACT
+   ========================================================= */
+
+.employee-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.employee-contact span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    color: #475569;
+
+    font-size: 13px;
+}
+
+.employee-contact i {
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   EMPLOYEE STATUS
+   ========================================================= */
+
+.employee-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.employee-status-badge.active {
+    background: #ecfdf3;
+    color: #15803d;
+}
+
+.employee-status-badge.inactive {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.employee-status-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.employee-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    white-space: nowrap;
+}
+
+.employee-delete-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+   ========================================================= */
+
+.employee-edit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    padding: 7px 11px;
+
+    border: 1px solid #f59e0b;
+    border-radius: 7px;
+
+    background: #fffbeb;
+    color: #b45309;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.employee-edit-button:hover {
+    background: #f59e0b;
+    border-color: #f59e0b;
+    color: #ffffff;
+
+    transform: translateY(-1px);
+}
+
+.employee-edit-button i {
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   DELETE BUTTON
+   ========================================================= */
+
+.employee-delete-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    padding: 7px 11px;
+
+    border: 1px solid #ef4444;
+    border-radius: 7px;
+
+    background: #fef2f2;
+    color: #dc2626;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.employee-delete-button:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+
+    transform: translateY(-1px);
+}
+
+.employee-delete-button i {
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   EMPTY STATE ICON
+   ========================================================= */
+
+.employees-empty-icon {
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 14px;
+
+    border-radius: 16px;
+
+    background: #eff6ff;
+    color: #2563eb;
+
+    font-size: 27px;
+}
+
+.readonly-empty .employees-empty-icon {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .employees-table {
+        min-width: 950px;
+    }
+
+}
+
+
+@media (max-width: 900px) {
+
+    .employees-page .dashboard-page-header {
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .employees-header-actions {
+        flex-shrink: 0;
+    }
+
+    .employees-table {
+        min-width: 900px;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .employees-page .dashboard-page-header {
+        flex-direction: column;
+    }
+
+    .employees-header-actions {
+        width: 100%;
+    }
+
+    .employees-add-button {
+        width: 100%;
+    }
+
+    .employees-table {
+        min-width: 850px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .employees-add-button {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .employee-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .employee-edit-button,
+    .employee-delete-button {
+        width: 100%;
+    }
+
+}

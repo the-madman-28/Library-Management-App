@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}Available Books{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container available-books-page">
+
+    <!-- Page Header -->
+    <div class="page-header">
+
+        <div>
+            
+            <h1>Available Books</h1>
+
+        </div>
+
+        <a
+            href="{{ url_for('main.index') }}"
+            class="btn btn-light"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- Available Books Panel -->
+    <div class="dashboard-panel readonly-panel available-books-panel">
+
+        <!-- Panel Header -->
+        <div class="readonly-panel-header">
+
+            <div>
+                <h2>Book(s) Details</h2>
+
+                <p>
+                    {% if search_query %}
+                        Search results for
+                        <strong>"{{ search_query }}"</strong>
+                    {% else %}
+                        {{ books|length }} book(s) available
+                    {% endif %}
+                </p>
+            </div>
+
+
+            <!-- Search -->
+            <form
+                method="GET"
+                class="table-search-form"
+            >
+
+                <div class="table-search-box">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        name="q"
+                        value="{{ search_query or '' }}"
+                        placeholder="Search available books..."
+                        autocomplete="off"
+                    >
+
+                    {% if search_query %}
+
+                    <a
+                        href="{{ request.path }}"
+                        class="table-search-clear"
+                        title="Clear search"
+                    >
+                        <i class="bi bi-x"></i>
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-search"></i>
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- Results -->
+        {% if books %}
+
+        <div class="readonly-table-wrapper">
+
+            <table class="readonly-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Book Code</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Available</th>
+                        <th>Total Copies</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for book in books %}
+
+                    <tr>
+
+                        <!-- Book Code -->
+                        <td>
+                            <strong>
+                                {{ book.book_code }}
+                            </strong>
+                        </td>
+
+
+                        <!-- Title -->
+                        <td>
+                            <span class="book-title">
+                                {{ book.title }}
+                            </span>
+                        </td>
+
+
+                        <!-- Author -->
+                        <td>
+                            {{ book.author or "—" }}
+                        </td>
+
+
+                        <!-- Category -->
+                        <td>
+                            {{ book.category or "—" }}
+                        </td>
+
+
+                        <!-- Available Copies -->
+                        <td>
+                            <span class="availability-badge available">
+                                <i class="bi bi-check-circle"></i>
+                                {{ book.available_copies }}
+                            </span>
+                        </td>
+
+
+                        <!-- Total Copies -->
+                        <td>
+                            {{ book.total_copies }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <!-- Empty / Search Result State -->
+        {% if search_query %}
+
+        <div class="readonly-empty">
+
+            <i class="bi bi-search"></i>
+
+            <strong>No Books Found</strong>
+
+            <span>
+                No available books matched
+                <strong>"{{ search_query }}"</strong>.
+            </span>
+
+            <a
+                href="{{ request.path }}"
+                class="btn btn-light"
+            >
+                <i class="bi bi-x-circle"></i>
+                Clear Search
+            </a>
+
+        </div>
+
+        {% else %}
+
+        <div class="readonly-empty">
+
+            <i class="bi bi-book"></i>
+
+            <strong>No books available</strong>
+
+            <span>
+                There are currently no books available for issue.
+            </span>
+
+        </div>
+
+        {% endif %}
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

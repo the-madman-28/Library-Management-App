@@ -1,0 +1,7 @@
+.books-icon { background:#eff6ff; color:var(--primary); }
+.employees-icon { background:#f0fdf4; color:var(--success); }
+.transaction-icon { background:#fff7ed; color:#ea580c; }
+.issue-icon { background:#eff6ff; color:var(--primary); }
+.return-icon { background:#fef2f2; color:var(--danger); }
+.books-action-icon { background:#f0fdf4; color:var(--success); }
+.employee-action-icon { background:#f5f3ff; color:var(--purple); }

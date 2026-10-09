@@ -1,0 +1,234 @@
+/* =========================================================
+   BOOKS PAGE
+========================================================= */
+
+.books-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.books-add-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+/* =========================================================
+   BOOK TABLE
+========================================================= */
+
+.books-table th:last-child,
+.books-table td:last-child {
+    min-width: 175px;
+}
+
+
+.book-code-badge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 5px 9px;
+
+    border-radius: 7px;
+
+    background: #eff6ff;
+
+    color: #1d4ed8;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 0.3px;
+}
+
+
+.book-table-title {
+    min-width: 180px;
+}
+
+
+.book-table-title strong {
+    color: #1f2937;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    line-height: 1.4;
+}
+
+
+.book-category-badge {
+    display: inline-block;
+
+    max-width: 130px;
+
+    overflow: hidden;
+
+    padding: 4px 8px;
+
+    border-radius: 6px;
+
+    background: #f3f4f6;
+
+    color: #4b5563;
+
+    font-size: 11px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.table-muted {
+    color: #9ca3af;
+}
+
+
+.book-count {
+    font-weight: 600;
+    color: #374151;
+}
+
+
+/* =========================================================
+   AVAILABILITY
+========================================================= */
+
+.availability-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 5px 9px;
+
+    border-radius: 7px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+.availability-badge.available {
+    background: #ecfdf5;
+    color: #15803d;
+}
+
+
+.availability-badge.unavailable {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.book-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    white-space: nowrap;
+}
+
+
+.book-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+.book-delete-form {
+    display: inline;
+    margin: 0;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.books-empty-icon {
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 14px;
+
+    border-radius: 14px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 24px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .books-header-actions {
+        flex-wrap: wrap;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .dashboard-page-header {
+        align-items: flex-start;
+    }
+
+
+    .books-header-actions {
+        width: 100%;
+    }
+
+
+    .books-add-button {
+        flex: 1;
+        justify-content: center;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .books-header-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+
+    .books-header-actions .dashboard-back-button,
+    .books-add-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+
+    .book-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+
+    .book-actions .btn {
+        justify-content: center;
+    }
+
+}

@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}Employees{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container employees-page">
+
+    <!-- Page Header -->
+    <div class="dashboard-page-header">
+
+        <div>
+            <h1>Manage Employees</h1>
+        </div>
+
+        <div class="employees-header-actions">
+
+            <a
+                href="{{ url_for('employees.add_employee') }}"
+                class="employees-add-button"
+            >
+                <i class="bi bi-person-plus"></i>
+                Add Employee
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Employees Panel -->
+    <div class="dashboard-panel readonly-panel">
+
+        <!-- Panel Header -->
+        <div class="readonly-panel-header">
+
+            <div>
+
+                <h2>
+                    <i class="bi bi-people"></i>
+                    Employees
+                </h2>
+
+                <p>
+
+                    {% if search_query %}
+
+                        Search results for
+                        <strong>"{{ search_query }}"</strong>
+
+                    {% else %}
+
+                        {{ employees|length }} employee(s)
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+            <!-- Search -->
+            <form
+                method="GET"
+                class="table-search-form"
+            >
+
+                <div class="table-search-box">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        name="q"
+                        value="{{ search_query or '' }}"
+                        placeholder="Search employees..."
+                        autocomplete="off"
+                    >
+
+                    {% if search_query %}
+
+                    <a
+                        href="{{ request.path }}"
+                        class="table-search-clear"
+                        title="Clear search"
+                        aria-label="Clear search"
+                    >
+                        <i class="bi bi-x"></i>
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-search"></i>
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- Employees Table -->
+        {% if employees %}
+
+        <div class="readonly-table-wrapper">
+
+            <table class="readonly-table employees-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Employee Code</th>
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Contact</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for employee in employees %}
+
+                    <tr>
+
+                        <!-- Employee Code -->
+                        <td>
+
+                            <span class="employee-code-badge">
+                                {{ employee.employee_code }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- Employee -->
+                        <td>
+
+                            <div class="employee-table-name">
+
+                                <strong>
+                                    {{ employee.name }}
+                                </strong>
+
+                                {% if employee.email %}
+
+                                <span>
+                                    {{ employee.email }}
+                                </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- Department -->
+                        <td>
+
+                            {% if employee.department %}
+
+                            <span class="employee-department-badge">
+                                {{ employee.department }}
+                            </span>
+
+                            {% else %}
+
+                            <span class="table-muted">
+                                —
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Designation -->
+                        <td>
+
+                            {% if employee.designation %}
+
+                            {{ employee.designation }}
+
+                            {% else %}
+
+                            <span class="table-muted">
+                                —
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Contact -->
+                        <td>
+
+                            <div class="employee-contact">
+
+                                {% if employee.phone %}
+
+                                <span>
+                                    <i class="bi bi-telephone"></i>
+                                    {{ employee.phone }}
+                                </span>
+
+                                {% elif employee.email %}
+
+                                <span>
+                                    <i class="bi bi-envelope"></i>
+                                    {{ employee.email }}
+                                </span>
+
+                                {% else %}
+
+                                <span class="table-muted">
+                                    —
+                                </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- Status -->
+                        <td>
+
+                            {% if employee.status == "ACTIVE" %}
+
+                            <span class="employee-status-badge active">
+                                <span class="employee-status-dot"></span>
+                                Active
+                            </span>
+
+                            {% else %}
+
+                            <span class="employee-status-badge inactive">
+                                <span class="employee-status-dot"></span>
+                                Inactive
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Actions -->
+                        <td>
+
+                            <div class="employee-actions">
+
+                                <a
+                                    href="{{ url_for(
+                                        'employees.edit_employee',
+                                        employee_id=employee.id
+                                    ) }}"
+                                    class="employee-edit-button"
+                                    title="Edit employee"
+                                >
+                                    <i class="bi bi-pencil"></i>
+                                    Edit
+                                </a>
+
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'employees.delete_employee',
+                                        employee_id=employee.id
+                                    ) }}"
+                                    class="employee-delete-form"
+                                    onsubmit="return confirm(
+                                        'Are you sure you want to delete this employee?'
+                                    );"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="employee-delete-button"
+                                        title="Delete employee"
+                                    >
+                                        <i class="bi bi-trash"></i>
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <!-- Empty / Search Result State -->
+
+        {% if search_query %}
+
+        <div class="readonly-empty">
+
+            <div class="employees-empty-icon">
+                <i class="bi bi-search"></i>
+            </div>
+
+            <strong>No Employees Found</strong>
+
+            <span>
+                No employees matched
+                <strong>"{{ search_query }}"</strong>.
+            </span>
+
+            <a
+                href="{{ request.path }}"
+                class="btn btn-light"
+            >
+                <i class="bi bi-x-circle"></i>
+                Clear Search
+            </a>
+
+        </div>
+
+        {% else %}
+
+        <div class="readonly-empty">
+
+            <div class="employees-empty-icon">
+                <i class="bi bi-people"></i>
+            </div>
+
+            <strong>No employees have been added yet</strong>
+
+            <span>
+                Add an employee to start managing your library users.
+            </span>
+
+            <a
+                href="{{ url_for('employees.add_employee') }}"
+                class="employees-add-button"
+            >
+                <i class="bi bi-person-plus"></i>
+                Add Employee
+            </a>
+
+        </div>
+
+        {% endif %}
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

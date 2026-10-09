@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}Transaction History{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container transaction-history-page">
+
+    <!-- Page Header -->
+    <div class="page-header">
+
+        <div>
+            <h1>Transaction History</h1>
+        </div>
+
+        <a
+            href="{{ url_for('main.index') }}"
+            class="btn btn-light"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- Transaction History Panel -->
+    <div class="dashboard-panel readonly-panel history-panel">
+
+        <!-- Panel Header -->
+        <div class="readonly-panel-header">
+
+            <div>
+                <h2>All-Time Transactions</h2>
+
+                <p>
+                    {% if search_query %}
+                        Search results for
+                        <strong>"{{ search_query }}"</strong>
+                    {% else %}
+                        {{ history|length }} transaction(s)
+                    {% endif %}
+                </p>
+            </div>
+
+
+            <!-- Search -->
+            <form
+                method="GET"
+                class="table-search-form"
+            >
+
+                <div class="table-search-box">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        name="q"
+                        value="{{ search_query or '' }}"
+                        placeholder="Search transaction history..."
+                        autocomplete="off"
+                    >
+
+                    {% if search_query %}
+
+                    <a
+                        href="{{ request.path }}"
+                        class="table-search-clear"
+                        title="Clear search"
+                    >
+                        <i class="bi bi-x"></i>
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-search"></i>
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- Results -->
+        {% if history %}
+
+        <div class="readonly-table-wrapper">
+
+            <table class="readonly-table history-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Book Code</th>
+                        <th>Book Title</th>
+                        <th>Employee Code</th>
+                        <th>Employee Name</th>
+                        <th>Issue Date</th>
+                        <th>Due Date</th>
+                        <th>Return Date</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for transaction in history %}
+
+                    <tr>
+
+                        <!-- Book Code -->
+                        <td>
+                            <strong>
+                                {{ transaction.book_code }}
+                            </strong>
+                        </td>
+
+
+                        <!-- Book Title -->
+                        <td>
+                            <span class="history-book-title">
+                                {{ transaction.book_title }}
+                            </span>
+                        </td>
+
+
+                        <!-- Employee Code -->
+                        <td>
+                            <strong>
+                                {{ transaction.employee_code }}
+                            </strong>
+                        </td>
+
+
+                        <!-- Employee Name -->
+                        <td>
+                            <span class="history-employee-name">
+                                {{ transaction.employee_name }}
+                            </span>
+                        </td>
+
+
+                        <!-- Issue Date -->
+                        <td>
+                            {{ transaction.issue_date.strftime("%d %b %Y") }}
+                        </td>
+
+
+                        <!-- Due Date -->
+                        <td>
+                            {{ transaction.due_date.strftime("%d %b %Y") }}
+                        </td>
+
+
+                        <!-- Return Date -->
+                        <td>
+
+                            {% if transaction.return_date %}
+
+                                {{ transaction.return_date.strftime("%d %b %Y") }}
+
+                            {% else %}
+
+                                <span class="table-muted">
+                                    —
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Status -->
+                        <td>
+
+                            {% if transaction.status == "ISSUED" %}
+
+                            <span class="status-badge status-issued">
+                                <i class="bi bi-bookmark-check"></i>
+                                ISSUED
+                            </span>
+
+                            {% elif transaction.status == "RETURNED" %}
+
+                            <span class="status-badge status-returned">
+                                <i class="bi bi-check-circle"></i>
+                                RETURNED
+                            </span>
+
+                            {% else %}
+
+                            <span class="status-badge status-default">
+                                {{ transaction.status }}
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <!-- Empty / Search Result State -->
+        {% if search_query %}
+
+        <div class="readonly-empty">
+
+            <i class="bi bi-search"></i>
+
+            <strong>No Transactions Found</strong>
+
+            <span>
+                No transaction history matched
+                <strong>"{{ search_query }}"</strong>.
+            </span>
+
+            <a
+                href="{{ request.path }}"
+                class="btn btn-light"
+            >
+                <i class="bi bi-x-circle"></i>
+                Clear Search
+            </a>
+
+        </div>
+
+        {% else %}
+
+        <div class="readonly-empty">
+
+            <i class="bi bi-clock-history"></i>
+
+            <strong>No Transaction History</strong>
+
+            <span>
+                No book transactions have been recorded yet.
+            </span>
+
+        </div>
+
+        {% endif %}
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

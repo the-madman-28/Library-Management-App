@@ -1,0 +1,485 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Book{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container book-form-page">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="dashboard-page-header">
+
+        <div>
+
+            <h1>Edit Book</h1>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('books.list_books') }}"
+            class="btn btn-light"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Books
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         FORM WORKSPACE
+    ====================================================== -->
+
+    <div class="book-form-workspace">
+
+
+        <!-- =================================================
+             MAIN FORM
+        ================================================== -->
+
+        <div class="card book-form-panel">
+
+            <div class="book-form-panel-header">
+
+                <div class="book-form-panel-icon">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
+
+                <div>
+
+                    <h2>Book Information</h2>
+
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                class="book-form"
+            >
+
+                <!-- =================================================
+                     BASIC INFORMATION
+                ================================================== -->
+
+                <div class="book-form-section">
+
+                    <div class="book-section-heading">
+
+                        <div class="book-section-number">
+                            01
+                        </div>
+
+                        <div>
+
+                            <h3>Basic Information</h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="book-form-grid">
+
+
+                        <!-- Book Code -->
+
+                        <div class="book-form-group">
+
+                            <label
+                                for="book_code"
+                                class="book-form-label"
+                            >
+                                Book Code
+                                <span>*</span>
+                            </label>
+
+
+                            <div class="book-input-wrapper">
+
+                                <i class="bi bi-upc-scan"></i>
+
+                                <input
+                                    type="text"
+                                    class="book-input"
+                                    id="book_code"
+                                    name="book_code"
+                                    value="{{ book.book_code }}"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Title -->
+
+                        <div class="book-form-group">
+
+                            <label
+                                for="title"
+                                class="book-form-label"
+                            >
+                                Title
+                                <span>*</span>
+                            </label>
+
+
+                            <div class="book-input-wrapper">
+
+                                <i class="bi bi-book"></i>
+
+                                <input
+                                    type="text"
+                                    class="book-input"
+                                    id="title"
+                                    name="title"
+                                    value="{{ book.title }}"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Author -->
+
+                        <div class="book-form-group">
+
+                            <label
+                                for="author"
+                                class="book-form-label"
+                            >
+                                Author
+                            </label>
+
+
+                            <div class="book-input-wrapper">
+
+                                <i class="bi bi-person"></i>
+
+                                <input
+                                    type="text"
+                                    class="book-input"
+                                    id="author"
+                                    name="author"
+                                    value="{{ book.author or '' }}"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Publisher -->
+
+                        <div class="book-form-group">
+
+                            <label
+                                for="publisher"
+                                class="book-form-label"
+                            >
+                                Publisher
+                            </label>
+
+
+                            <div class="book-input-wrapper">
+
+                                <i class="bi bi-building"></i>
+
+                                <input
+                                    type="text"
+                                    class="book-input"
+                                    id="publisher"
+                                    name="publisher"
+                                    value="{{ book.publisher or '' }}"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     CLASSIFICATION
+                ================================================== -->
+
+                <div class="book-form-section">
+
+                    <div class="book-section-heading">
+
+                        <div class="book-section-number">
+                            02
+                        </div>
+
+                        <div>
+
+                            <h3>Classification & Identification</h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="book-form-grid">
+
+
+                        <!-- Category -->
+
+                        <div class="book-form-group">
+
+                            <label
+                                for="category"
+                                class="book-form-label"
+                            >
+                                Category
+                            </label>
+
+
+                            <div class="book-input-wrapper">
+
+                                <i class="bi bi-tags"></i>
+
+                                <input
+                                    type="text"
+                                    class="book-input"
+                                    id="category"
+                                    name="category"
+                                    value="{{ book.category or '' }}"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ISBN -->
+
+                        <div class="book-form-group">
+
+                            <label
+                                for="isbn"
+                                class="book-form-label"
+                            >
+                                ISBN
+                            </label>
+
+
+                            <div class="book-input-wrapper">
+
+                                <i class="bi bi-upc"></i>
+
+                                <input
+                                    type="text"
+                                    class="book-input"
+                                    id="isbn"
+                                    name="isbn"
+                                    value="{{ book.isbn or '' }}"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     INVENTORY
+                ================================================== -->
+
+                <div class="book-form-section">
+
+                    <div class="book-section-heading">
+
+                        <div class="book-section-number">
+                            03
+                        </div>
+
+                        <div>
+
+                            <h3>Inventory</h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="book-inventory-field">
+
+                        <label
+                            for="total_copies"
+                            class="book-form-label"
+                        >
+                            Total Copies
+                            <span>*</span>
+                        </label>
+
+
+                        <div class="book-input-wrapper">
+
+                            <i class="bi bi-stack"></i>
+
+                            <input
+                                type="number"
+                                class="book-input"
+                                id="total_copies"
+                                name="total_copies"
+                                value="{{ book.total_copies }}"
+                                min="1"
+                                required
+                            >
+
+                        </div>
+
+
+                        <small class="book-field-help">
+                            The total cannot be reduced below the number
+                            of copies currently issued.
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ACTIONS
+                ================================================== -->
+
+                <div class="book-form-actions">
+
+                    <a
+                        href="{{ url_for('books.list_books') }}"
+                        class="btn btn-light book-cancel-button"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary book-submit-button"
+                    >
+                        <i class="bi bi-check-circle"></i>
+                        Update Book
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- =================================================
+             INFORMATION PANEL
+        ================================================== -->
+
+        <aside class="book-form-info-panel">
+
+
+            <!-- Current Book -->
+
+            <div class="book-info-card">
+
+                <div class="book-info-card-header">
+
+                    <div class="book-info-card-icon">
+                        <i class="bi bi-book-half"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>Current Book</h3>
+
+                        <p>
+                            Inventory information
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="book-info-list">
+
+                    <div class="book-info-item">
+
+                        <span>
+                            <i class="bi bi-upc-scan"></i>
+                            Book Code
+                        </span>
+
+                        <strong>
+                            {{ book.book_code }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="book-info-item">
+
+                        <span>
+                            <i class="bi bi-stack"></i>
+                            Total Copies
+                        </span>
+
+                        <strong>
+                            {{ book.total_copies }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="book-info-item">
+
+                        <span>
+                            <i class="bi bi-check-circle"></i>
+                            Available
+                        </span>
+
+                        <strong>
+                            {{ book.available_copies }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="book-info-item">
+
+                        <span>
+                            <i class="bi bi-bookmark-check"></i>
+                            Issued
+                        </span>
+
+                        <strong>
+                            {{ book.total_copies - book.available_copies }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+{% endblock %}

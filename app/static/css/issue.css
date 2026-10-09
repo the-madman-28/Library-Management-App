@@ -1,0 +1,751 @@
+/* =========================================================
+   ISSUE BOOK PAGE
+========================================================= */
+
+.issue-page {
+    padding-bottom: 40px;
+}
+
+
+/* =========================================================
+   ISSUE WORKSPACE
+========================================================= */
+
+.issue-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.8fr);
+    gap: 24px;
+    align-items: start;
+}
+
+
+/* =========================================================
+   MAIN FORM PANEL
+========================================================= */
+
+.issue-form-panel {
+    padding: 0;
+    overflow: hidden;
+}
+
+
+.issue-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    padding: 26px 30px;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+
+.issue-panel-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background: #eff6ff;
+    color: #2563eb;
+
+    font-size: 21px;
+}
+
+
+.issue-panel-header h2 {
+    margin: 0;
+
+    color: #111827;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+
+.issue-panel-header p {
+    margin: 4px 0 0;
+
+    color: #6b7280;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.issue-form {
+    padding: 30px;
+}
+
+
+.issue-form-section {
+    padding-bottom: 28px;
+    margin-bottom: 28px;
+
+    border-bottom: 1px solid #eef0f3;
+}
+
+
+.issue-form-section:last-of-type {
+    padding-bottom: 0;
+    margin-bottom: 0;
+
+    border-bottom: 0;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+========================================================= */
+
+.issue-section-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+
+.issue-section-number {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 9px;
+
+    background: #f3f4f6;
+
+    color: #4b5563;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 0.4px;
+}
+
+
+.issue-section-heading h3 {
+    margin: 0;
+
+    color: #1f2937;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+.issue-section-heading p {
+    margin: 3px 0 0;
+
+    color: #9ca3af;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   FORM LABELS
+========================================================= */
+
+.issue-form-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #374151;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.issue-form-label span {
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   INPUT WRAPPER
+========================================================= */
+
+.issue-input-wrapper {
+    position: relative;
+}
+
+
+.issue-input-wrapper > i {
+    position: absolute;
+
+    left: 15px;
+    top: 50%;
+
+    z-index: 2;
+
+    transform: translateY(-50%);
+
+    color: #9ca3af;
+
+    font-size: 16px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.issue-select {
+    width: 100%;
+
+    min-height: 48px;
+
+    padding: 11px 42px 11px 44px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 10px;
+
+    background-color: #ffffff;
+
+    color: #1f2937;
+
+    font-size: 14px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.issue-select:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+.issue-select:hover {
+    border-color: #9ca3af;
+}
+
+
+/* =========================================================
+   DATE INPUT
+========================================================= */
+
+.issue-input {
+    width: 100%;
+
+    min-height: 48px;
+
+    padding: 11px 14px 11px 44px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    color: #1f2937;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.issue-input:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+/* =========================================================
+   DATE GRID
+========================================================= */
+
+.issue-date-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+.issue-textarea {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    color: #1f2937;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    resize: vertical;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.issue-textarea::placeholder {
+    color: #9ca3af;
+}
+
+
+.issue-textarea:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.issue-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    padding-top: 28px;
+}
+
+
+.issue-cancel-button {
+    min-width: 100px;
+
+    border: 1px solid #d1d5db;
+}
+
+
+.issue-submit-button {
+    min-width: 145px;
+
+    padding: 11px 20px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   SIDE PANEL
+========================================================= */
+
+.issue-info-panel {
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   INFORMATION CARD
+========================================================= */
+
+.issue-info-card {
+    padding: 24px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 4px 15px rgba(15, 23, 42, 0.04);
+}
+
+
+.issue-info-card-header {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #eef0f3;
+}
+
+
+.issue-info-card-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background: #f0fdf4;
+    color: #16a34a;
+
+    font-size: 18px;
+}
+
+
+.issue-info-card-header h3 {
+    margin: 0;
+
+    color: #1f2937;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+.issue-info-card-header p {
+    margin: 3px 0 0;
+
+    color: #9ca3af;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   INFO LIST
+========================================================= */
+
+.issue-info-list {
+    padding-top: 6px;
+}
+
+
+.issue-info-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid #f3f4f6;
+}
+
+
+.issue-info-item:last-child {
+    border-bottom: 0;
+}
+
+
+.issue-info-item span {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    color: #6b7280;
+
+    font-size: 12px;
+}
+
+
+.issue-info-item span i {
+    font-size: 14px;
+}
+
+
+.issue-info-item strong {
+    max-width: 145px;
+
+    overflow: hidden;
+
+    color: #374151;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-align: right;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   HELP CARD
+========================================================= */
+
+.issue-help-card {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 13px;
+
+    padding: 20px;
+
+    background: #fffbeb;
+
+    border: 1px solid #fde68a;
+
+    border-radius: 14px;
+}
+
+
+.issue-help-icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 9px;
+
+    background: #fef3c7;
+
+    color: #d97706;
+
+    font-size: 16px;
+}
+
+
+.issue-help-card h3 {
+    margin: 1px 0 8px;
+
+    color: #92400e;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+.issue-help-card ul {
+    margin: 0;
+
+    padding-left: 17px;
+
+    color: #92400e;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+.issue-help-card li {
+    margin-bottom: 3px;
+}
+
+
+.issue-help-card li:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   STATUS CARD
+========================================================= */
+
+.issue-status-card {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 16px 18px;
+
+    background: #f0fdf4;
+
+    border: 1px solid #bbf7d0;
+
+    border-radius: 12px;
+}
+
+
+.issue-status-dot {
+    width: 9px;
+    height: 9px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #16a34a;
+
+    box-shadow:
+        0 0 0 4px rgba(22, 163, 74, 0.10);
+}
+
+
+.issue-status-card strong {
+    display: block;
+
+    color: #166534;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+.issue-status-card span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #4d7c5b;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .issue-workspace {
+        grid-template-columns: 1fr;
+    }
+
+
+    .issue-info-panel {
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+    }
+
+
+    .issue-status-card {
+        grid-column: 1 / -1;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .issue-panel-header {
+        padding: 22px;
+    }
+
+
+    .issue-form {
+        padding: 22px;
+    }
+
+
+    .issue-date-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .issue-info-panel {
+        display: flex;
+    }
+
+
+    .issue-form-actions {
+        flex-direction: column-reverse;
+
+        align-items: stretch;
+    }
+
+
+    .issue-submit-button,
+    .issue-cancel-button {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .issue-panel-header {
+        align-items: flex-start;
+    }
+
+
+    .issue-panel-icon {
+        width: 42px;
+        height: 42px;
+
+        font-size: 18px;
+    }
+
+
+    .issue-panel-header h2 {
+        font-size: 18px;
+    }
+
+
+    .issue-section-heading {
+        gap: 10px;
+    }
+
+
+    .issue-form-section {
+        padding-bottom: 22px;
+        margin-bottom: 22px;
+    }
+
+
+    .issue-info-card,
+    .issue-help-card {
+        padding: 18px;
+    }
+
+}

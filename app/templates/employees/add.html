@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+
+{% block title %}Add Employee{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container employee-form-page">
+
+    <!-- Page Header -->
+    <div class="dashboard-page-header">
+
+        <div>
+            
+            <h1>Add Employee</h1>
+
+        </div>
+
+        <a
+            href="{{ url_for('employees.list_employees') }}"
+            class="btn btn-light"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Employees
+        </a>
+
+    </div>
+
+
+    <!-- Form Workspace -->
+    <div class="employee-form-workspace">
+
+        <!-- Main Form -->
+        <div class="employee-form-panel">
+
+            <div class="employee-form-panel-header">
+
+                <div class="employee-form-panel-icon">
+                    <i class="bi bi-person-plus"></i>
+                </div>
+
+                <div>
+                    <h2>Employee Information</h2>
+
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                class="employee-form"
+            >
+
+                <!-- Basic Information -->
+                <div class="employee-form-section">
+
+                    <div class="employee-section-heading">
+
+                        <span class="employee-section-number">
+                            01
+                        </span>
+
+                        <div>
+                            <h3>Basic Information</h3>
+                        </div>
+
+                    </div>
+
+
+                    <div class="employee-form-grid">
+
+                        <!-- Employee Code -->
+                        <div class="employee-form-field">
+
+                            <label
+                                for="employee_code"
+                                class="employee-form-label"
+                            >
+                                Employee Code
+                                <span>*</span>
+                            </label>
+
+                            <div class="employee-input-wrapper">
+
+                                <i class="bi bi-person-badge"></i>
+
+                                <input
+                                    type="text"
+                                    id="employee_code"
+                                    name="employee_code"
+                                    class="employee-input"
+                                    placeholder="e.g. EMP001"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Employee Name -->
+                        <div class="employee-form-field">
+
+                            <label
+                                for="name"
+                                class="employee-form-label"
+                            >
+                                Employee Name
+                                <span>*</span>
+                            </label>
+
+                            <div class="employee-input-wrapper">
+
+                                <i class="bi bi-person"></i>
+
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    class="employee-input"
+                                    placeholder="Enter employee name"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Professional Information -->
+                <div class="employee-form-section">
+
+                    <div class="employee-section-heading">
+
+                        <span class="employee-section-number">
+                            02
+                        </span>
+
+                        <div>
+                            <h3>Professional Information</h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="employee-form-grid">
+
+                        <!-- Department -->
+                        <div class="employee-form-field">
+
+                            <label
+                                for="department"
+                                class="employee-form-label"
+                            >
+                                Department
+                            </label>
+
+                            <div class="employee-input-wrapper">
+
+                                <i class="bi bi-building"></i>
+
+                                <input
+                                    type="text"
+                                    id="department"
+                                    name="department"
+                                    class="employee-input"
+                                    placeholder="e.g. Computer Science"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Designation -->
+                        <div class="employee-form-field">
+
+                            <label
+                                for="designation"
+                                class="employee-form-label"
+                            >
+                                Designation
+                            </label>
+
+                            <div class="employee-input-wrapper">
+
+                                <i class="bi bi-briefcase"></i>
+
+                                <input
+                                    type="text"
+                                    id="designation"
+                                    name="designation"
+                                    class="employee-input"
+                                    placeholder="e.g. Assistant Professor"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Contact Information -->
+                <div class="employee-form-section">
+
+                    <div class="employee-section-heading">
+
+                        <span class="employee-section-number">
+                            03
+                        </span>
+
+                        <div>
+                            <h3>Contact Information</h3>
+                        </div>
+
+                    </div>
+
+
+                    <div class="employee-form-grid">
+
+                        <!-- Email -->
+                        <div class="employee-form-field">
+
+                            <label
+                                for="email"
+                                class="employee-form-label"
+                            >
+                                Email
+                            </label>
+
+                            <div class="employee-input-wrapper">
+
+                                <i class="bi bi-envelope"></i>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    class="employee-input"
+                                    placeholder="employee@example.com"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Phone -->
+                        <div class="employee-form-field">
+
+                            <label
+                                for="phone"
+                                class="employee-form-label"
+                            >
+                                Phone
+                            </label>
+
+                            <div class="employee-input-wrapper">
+
+                                <i class="bi bi-telephone"></i>
+
+                                <input
+                                    type="text"
+                                    id="phone"
+                                    name="phone"
+                                    class="employee-input"
+                                    placeholder="Enter phone number"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Account Status -->
+                <div class="employee-form-section">
+
+                    <div class="employee-section-heading">
+
+                        <span class="employee-section-number">
+                            04
+                        </span>
+
+                        <div>
+                            <h3>Employee Status</h3>
+                        </div>
+
+                    </div>
+
+
+                    <div class="employee-form-field employee-status-field">
+
+                        <div class="employee-input-wrapper">
+
+                            <i class="bi bi-toggle-on"></i>
+
+                            <select
+                                id="status"
+                                name="status"
+                                class="employee-select"
+                            >
+
+                                <option value="ACTIVE" selected>
+                                    Active
+                                </option>
+
+                                <option value="INACTIVE">
+                                    Inactive
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <small>
+                            Only active employees should be issued books.
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Form Actions -->
+                <div class="employee-form-actions">
+
+                    <a
+                        href="{{ url_for('employees.list_employees') }}"
+                        class="employee-cancel-button"
+                    >
+                        <i class="bi bi-x-lg"></i>
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="employee-submit-button"
+                    >
+                        <i class="bi bi-person-plus"></i>
+                        Save Employee
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

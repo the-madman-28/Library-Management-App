@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}Library Tool{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="page-header">
+
+        <div>
+            <h1>Overview</h1>
+        </div>
+
+        <div class="current-date">
+            {{ today }}
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         OVERVIEW CARDS
+    ====================================================== -->
+
+    <div class="stats-grid">
+
+        <!-- Total Books -->
+        <a
+            href="{{ url_for('books.books_overview') }}"
+            class="stat-card stat-card-link"
+        >
+            <div class="stat-icon books-icon">
+                <i class="bi bi-book"></i>
+            </div>
+
+            <div class="stat-content">
+                <span class="stat-label">Total Books</span>
+                <strong>{{ total_books }}</strong>
+            </div>
+
+            <i class="bi bi-chevron-right stat-card-arrow"></i>
+        </a>
+
+
+        <!-- Available Books -->
+        <a
+            href="{{ url_for('books.available_books') }}"
+            class="stat-card stat-card-link"
+        >
+            <div class="stat-icon available-icon">
+                <i class="bi bi-book-half"></i>
+            </div>
+
+            <div class="stat-content">
+                <span class="stat-label">Available</span>
+                <strong>{{ available_books }}</strong>
+            </div>
+
+            <i class="bi bi-chevron-right stat-card-arrow"></i>
+        </a>
+
+
+        <!-- Employees -->
+        <a
+            href="{{ url_for('employees.employees_overview') }}"
+            class="stat-card stat-card-link"
+        >
+            <div class="stat-icon employees-icon">
+                <i class="bi bi-people"></i>
+            </div>
+
+            <div class="stat-content">
+                <span class="stat-label">Employees</span>
+                <strong>{{ total_employees }}</strong>
+            </div>
+
+            <i class="bi bi-chevron-right stat-card-arrow"></i>
+        </a>
+
+
+        <!-- Issued Books -->
+        <a
+            href="{{ url_for('transactions.issued_books') }}"
+            class="stat-card stat-card-link"
+        >
+            <div class="stat-icon issued-icon">
+                <i class="bi bi-arrow-up-right"></i>
+            </div>
+
+            <div class="stat-content">
+                <span class="stat-label">Issued</span>
+                <strong>{{ issued_books }}</strong>
+            </div>
+
+            <i class="bi bi-chevron-right stat-card-arrow"></i>
+        </a>
+
+
+        <!-- Overdue Books -->
+        <a
+            href="{{ url_for('transactions.overdue_books') }}"
+            class="stat-card stat-card-link overdue-card"
+        >
+            <div class="stat-icon overdue-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+
+            <div class="stat-content">
+                <span class="stat-label">Overdue</span>
+                <strong>{{ overdue_books }}</strong>
+            </div>
+
+            <i class="bi bi-chevron-right stat-card-arrow"></i>
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         ACTIONS
+    ====================================================== -->
+
+    <div class="dashboard-panel actions-panel">
+
+        <div class="actions-grid">
+
+            <!-- Issue Book -->
+            <a
+                href="{{ url_for('transactions.issue_book') }}"
+                class="dashboard-action"
+            >
+                <div class="action-icon">
+                    <i class="bi bi-arrow-up-right"></i>
+                </div>
+
+                <div class="action-content">
+                    <strong>Issue Book</strong>
+                    <small>Issue a book to an employee</small>
+                </div>
+
+                <i class="bi bi-chevron-right action-arrow"></i>
+            </a>
+
+
+            <!-- Return Book -->
+            <a
+                href="{{ url_for('transactions.return_book') }}"
+                class="dashboard-action"
+            >
+                <div class="action-icon">
+                    <i class="bi bi-arrow-down-left"></i>
+                </div>
+
+                <div class="action-content">
+                    <strong>Return Book</strong>
+                    <small>Process a book return</small>
+                </div>
+
+                <i class="bi bi-chevron-right action-arrow"></i>
+            </a>
+
+
+            <!-- Manage Books -->
+            <a
+                href="{{ url_for('books.list_books') }}"
+                class="dashboard-action"
+            >
+                <div class="action-icon">
+                    <i class="bi bi-book"></i>
+                </div>
+
+                <div class="action-content">
+                    <strong>Manage Books</strong>
+                    <small>View and manage inventory</small>
+                </div>
+
+                <i class="bi bi-chevron-right action-arrow"></i>
+            </a>
+
+
+            <!-- Manage Employees -->
+            <a
+                href="{{ url_for('employees.list_employees') }}"
+                class="dashboard-action"
+            >
+                <div class="action-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+
+                <div class="action-content">
+                    <strong>Manage Employees</strong>
+                    <small>View and manage employees</small>
+                </div>
+
+                <i class="bi bi-chevron-right action-arrow"></i>
+            </a>
+
+
+            <!-- All-Time Transactions -->
+            <a
+                href="{{ url_for('transactions.transaction_history') }}"
+                class="dashboard-action all-transactions-action"
+            >
+                <div class="action-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+
+                <div class="action-content">
+                    <strong>All-Time Transactions</strong>
+                    <small>Complete transaction history</small>
+                </div>
+
+                <div class="transaction-count">
+                    {{ all_time_transactions }}
+                </div>
+
+                <i class="bi bi-chevron-right action-arrow"></i>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

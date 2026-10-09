@@ -1,0 +1,29 @@
+@media (max-width: 992px) {
+    .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .actions-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+
+@media (max-width: 768px) {
+    .app-navbar { min-height:64px; }
+    .dashboard-container { padding:30px 16px 50px; }
+    .page-header { align-items:flex-start; gap:12px; }
+    .page-header h1 { font-size:1.5rem; }
+    .current-date { padding:8px 11px; font-size:.75rem; }
+    .app-navbar .nav-link { padding:10px 8px !important; }
+    .readonly-table { min-width:720px; }
+    .activity-table { min-width:600px; }
+}
+
+@media (max-width: 576px) {
+    .dashboard-container { padding:28px 16px 50px; }
+    .page-header { flex-direction:column; align-items:flex-start; gap:10px; margin-bottom:22px; }
+    .current-date { align-self:flex-start; }
+    .stats-grid { display:flex; gap:10px; width:calc(100% + 16px); overflow-x:auto; padding-bottom:6px; padding-right:16px; scrollbar-width:thin; }
+    .stat-card { flex:0 0 180px; min-height:100px; }
+    .actions-grid { grid-template-columns:1fr; gap:12px; padding:14px; }
+    .dashboard-action { min-height:96px; }
+    .readonly-panel-header { padding:16px; }
+    .readonly-table th, .readonly-table td { padding:11px 14px; }
+    .issued-books-panel { margin-top:18px; }
+    .app-footer .container-fluid { flex-direction:column; gap:6px; }
+}

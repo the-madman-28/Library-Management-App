@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}All Books{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                All Books
+            </h1>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('main.index') }}"
+            class="btn btn-light"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         BOOK INVENTORY
+    ====================================================== -->
+
+    <div class="dashboard-panel readonly-panel">
+
+        <div class="readonly-panel-header">
+
+            <div>
+
+                <h2>
+                    Book Inventory
+                </h2>
+
+                <p>
+
+                    {% if search_query %}
+
+                        Search results for
+                        <strong>
+                            "{{ search_query }}"
+                        </strong>
+
+                    {% else %}
+
+                        {{ books|length }} book(s)
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 SEARCH
+            ================================================== -->
+
+            <form
+                method="GET"
+                class="table-search-form"
+            >
+
+                <div class="table-search-box">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        name="q"
+                        value="{{ search_query or '' }}"
+                        placeholder="Search books..."
+                        autocomplete="off"
+                    >
+
+                    {% if search_query %}
+
+                    <a
+                        href="{{ request.path }}"
+                        class="table-search-clear"
+                        title="Clear search"
+                    >
+                        <i class="bi bi-x"></i>
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-search"></i>
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- =====================================================
+             BOOK TABLE
+        ====================================================== -->
+
+        {% if books %}
+
+        <div class="readonly-table-wrapper">
+
+            <table class="readonly-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Book Code
+                        </th>
+
+                        <th>
+                            Title
+                        </th>
+
+                        <th>
+                            Author
+                        </th>
+
+                        <th>
+                            Publisher
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            ISBN
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for book in books %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ book.book_code }}
+                            </strong>
+                        </td>
+
+
+                        <td>
+                            <strong>
+                                {{ book.title }}
+                            </strong>
+                        </td>
+
+
+                        <td>
+                            {{ book.author or "—" }}
+                        </td>
+
+
+                        <td>
+                            {{ book.publisher or "—" }}
+                        </td>
+
+
+                        <td>
+                            {{ book.category or "—" }}
+                        </td>
+
+
+                        <td>
+                            {{ book.isbn or "—" }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+
+        <!-- =====================================================
+             EMPTY SEARCH STATE
+        ====================================================== -->
+
+        {% if search_query %}
+
+        <div class="readonly-empty">
+
+            <i class="bi bi-search"></i>
+
+            <strong>
+                No Books Found
+            </strong>
+
+            <span>
+                No books matched
+                <strong>
+                    "{{ search_query }}"
+                </strong>.
+            </span>
+
+            <a
+                href="{{ request.path }}"
+                class="btn btn-light mt-3"
+            >
+                <i class="bi bi-x-circle"></i>
+                Clear Search
+            </a>
+
+        </div>
+
+
+        {% else %}
+
+
+        <!-- =====================================================
+             NORMAL EMPTY STATE
+        ====================================================== -->
+
+        <div class="readonly-empty">
+
+            <i class="bi bi-book"></i>
+
+            <strong>
+                No Books Found
+            </strong>
+
+            <span>
+                There are currently no books in the library.
+            </span>
+
+        </div>
+
+        {% endif %}
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

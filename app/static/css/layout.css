@@ -1,0 +1,33 @@
+.dashboard-container {
+    width: 100%; max-width: 1200px; margin: 0 auto; padding: 38px 24px 70px;
+}
+.page-header {
+    display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px;
+}
+.page-header h1 {
+    margin: 0; color: var(--text); font-size: 1.65rem; font-weight: 650; letter-spacing: -.4px;
+}
+.page-header p { margin: 5px 0 0; color: var(--muted); font-size: .88rem; }
+
+.current-date {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 15px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+    color: var(--text-soft); font-size: .82rem; font-weight: 600; white-space: nowrap;
+    box-shadow: var(--shadow-sm); transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+.current-date::before { content: "\f1ec"; font-family: "bootstrap-icons"; color: var(--primary); font-size: 14px; }
+.current-date:hover { border-color: #d1d5db; box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+.dashboard-panel {
+    overflow: hidden; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+}
+.panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px; border-bottom: 1px solid var(--border);
+}
+.panel-header h2 { margin: 0; color: var(--text); font-size: .98rem; font-weight: 600; }
+.panel-header p { margin: 3px 0 0; color: var(--muted); font-size: .76rem; }
+.panel-link { display: flex; align-items: center; gap: 5px; color: var(--primary); font-size: .76rem; font-weight: 500; text-decoration: none; }
+.panel-link:hover { text-decoration: underline; }
+.section-label { margin-bottom: 12px; color: #8a919b; font-size: .72rem; font-weight: 700; letter-spacing: .08em; }

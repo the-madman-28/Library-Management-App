@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+
+{% block title %}Issue Book{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container issue-page">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Issue Book
+            </h1>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('main.index') }}"
+            class="btn btn-light"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         ISSUE WORKSPACE
+    ====================================================== -->
+
+    <div class="issue-workspace">
+
+
+        <!-- =================================================
+             MAIN FORM
+        ================================================== -->
+
+        <div class="dashboard-panel issue-form-panel">
+
+            <div class="issue-panel-header">
+
+                <div class="issue-panel-icon">
+                    <i class="bi bi-box-arrow-right"></i>
+                </div>
+
+                <div>
+
+                    <h2>
+                        Details
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                class="issue-form"
+            >
+
+
+                <!-- =============================================
+                     EMPLOYEE
+                ============================================== -->
+
+                <div class="issue-form-section">
+
+                    <div class="issue-section-heading">
+
+                        <span class="issue-section-number">
+                            01
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Employee <span>*</span>
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="issue-input-wrapper">
+    <select
+        id="employee_id"
+        name="employee_id"
+        class="issue-select searchable-select"
+        autocomplete="off"
+        required
+    >
+        <option value="" selected></option>
+
+        {% for employee in employees %}
+        <option value="{{ employee.id }}">
+            {{ employee.employee_code }}
+            -
+            {{ employee.name }}
+            {% if employee.status != "ACTIVE" %}
+                ({{ employee.status }})
+            {% endif %}
+        </option>
+        {% endfor %}
+    </select>
+</div>
+
+                </div>
+
+
+                <!-- =============================================
+                     BOOK
+                ============================================== -->
+
+                <div class="issue-form-section">
+
+                    <div class="issue-section-heading">
+
+                        <span class="issue-section-number">
+                            02
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Book <span>*</span>
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="issue-input-wrapper">
+
+                        <select
+                            id="book_id"
+                            name="book_id"
+                            class="issue-select searchable-select"
+                            
+                            autocomplete="off"
+                            required
+                        >
+
+                            <option value="">
+                                
+                            </option>
+
+
+                            {% for book in books %}
+
+                            <option
+                                value="{{ book.id }}"
+                            >
+                                {{ book.book_code }}
+                                -
+                                {{ book.title }}
+                                -
+                                {{ book.available_copies }}
+                                available
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     DATES
+                ============================================== -->
+
+                <div class="issue-form-section">
+
+                    <div class="issue-section-heading">
+
+                        <span class="issue-section-number">
+                            03
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Loan Period <span>*</span>
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="issue-date-grid">
+
+
+                        <!-- Issue Date -->
+
+                        <div>
+
+                            <label
+                                for="issue_date"
+                                class="issue-form-label"
+                            >
+                                Issue Date
+                                <span>*</span>
+                            </label>
+
+
+                            <div class="issue-input-wrapper">
+
+                                <i class="bi bi-calendar3"></i>
+
+                                <input
+                                    type="date"
+                                    id="issue_date"
+                                    name="issue_date"
+                                    value="{{ today }}"
+                                    class="issue-input"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Due Date -->
+
+                        <div>
+
+                            <label
+                                for="due_date"
+                                class="issue-form-label"
+                            >
+                                Due Date
+                                <span>*</span>
+                            </label>
+
+
+                            <div class="issue-input-wrapper">
+
+                                <i class="bi bi-calendar-check"></i>
+
+                                <input
+                                    type="date"
+                                    id="due_date"
+                                    name="due_date"
+                                    class="issue-input"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     REMARKS
+                ============================================== -->
+
+                <div class="issue-form-section">
+
+                    <div class="issue-section-heading">
+
+                        <span class="issue-section-number">
+                            04
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Remarks
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <textarea
+                        id="remarks"
+                        name="remarks"
+                        class="issue-textarea"
+                        rows="4"
+                        placeholder="Add remarks if required..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- =============================================
+                     ACTIONS
+                ============================================== -->
+
+                <div class="issue-form-actions">
+
+                    <a
+                        href="{{ url_for('main.index') }}"
+                        class="btn btn-light issue-cancel-button"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary issue-submit-button"
+                    >
+                        <i class="bi bi-check-circle"></i>
+                        Issue Book
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- =================================================
+             SIDE INFORMATION PANEL
+        ================================================== -->
+
+        <aside class="issue-info-panel">
+
+            <!-- Important Information -->
+
+            <div class="issue-help-card">
+
+                <div class="issue-help-icon">
+                    <i class="bi bi-lightbulb"></i>
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        Before issuing
+                    </h3>
+
+                    <ul>
+
+                        <li>
+                            Make sure the employee is active.
+                        </li>
+
+                        <li>
+                            Confirm that the selected book has
+                            available copies.
+                        </li>
+
+                        <li>
+                            Verify the due date before submitting.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TOM SELECT
+========================================================= -->
+
+<link
+    href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.bootstrap5.min.css"
+    rel="stylesheet"
+>
+
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const employeeSelect = document.getElementById("employee_id");
+    const bookSelect = document.getElementById("book_id");
+
+    if (employeeSelect) {
+        new TomSelect(employeeSelect, {
+            create: false,
+            allowEmptyOption: true,
+            maxOptions: 500,
+
+            searchField: ["text"],
+
+            sortField: {
+                field: "text",
+                direction: "asc"
+            },
+
+            closeAfterSelect: true,
+
+            plugins: [
+                "clear_button"
+            ]
+        });
+    }
+
+    if (bookSelect) {
+        new TomSelect(bookSelect, {
+            create: false,
+            allowEmptyOption: true,
+            maxOptions: 500,
+
+            searchField: ["text"],
+
+            sortField: {
+                field: "text",
+                direction: "asc"
+            },
+
+            closeAfterSelect: true,
+
+            plugins: [
+                "clear_button"
+            ]
+        });
+    }
+
+});
+</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+a { color: inherit; }
+button, input, select, textarea { font: inherit; }
+
+.app-navbar {
+    min-height: 64px;
+    background: var(--navbar);
+    border-bottom: 1px solid #2a2d31;
+}
+.navbar-brand {
+    display: flex; align-items: center; gap: 10px;
+    color: #fff !important;
+    font-size: 1.05rem; font-weight: 600; letter-spacing: -.2px;
+}
+.brand-icon {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    background: #fff; color: var(--navbar); border-radius: 7px; font-size: 15px;
+}
+.app-navbar .nav-link {
+    display: flex; align-items: center; gap: 7px;
+    color: #aeb4bd !important;
+    padding: 8px 12px !important; border-radius: 6px;
+    font-size: .9rem; font-weight: 500; transition: var(--transition);
+}
+.app-navbar .nav-link:hover { color: #fff !important; background: #24272c; }
+
+.flash-area { padding-top: 16px; }
+.flash-area .alert { margin-bottom: 0; border-radius: 8px; }
+
+.app-footer { padding: 20px 0; color: var(--muted-light); font-size: .75rem; }
+.app-footer .container-fluid { display: flex; justify-content: space-between; }

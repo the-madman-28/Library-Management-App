@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}Overdue Books{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container overdue-page">
+
+    <!-- Page Header -->
+    <div class="page-header">
+
+        <div>
+            <h1>Overdue Books</h1>
+        </div>
+
+        <a
+            href="{{ url_for('main.index') }}"
+            class="btn btn-light"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- Overdue Books Panel -->
+    <div class="dashboard-panel readonly-panel overdue-panel">
+
+        <!-- Panel Header -->
+        <div class="readonly-panel-header">
+
+            <div>
+                <h2>Overdue Books</h2>
+
+                <p>
+                    {% if search_query %}
+                        Search results for
+                        <strong>"{{ search_query }}"</strong>
+                    {% else %}
+                        {{ transactions|length }} overdue book(s)
+                    {% endif %}
+                </p>
+            </div>
+
+
+            <!-- Search -->
+            <form
+                method="GET"
+                class="table-search-form"
+            >
+
+                <div class="table-search-box">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        name="q"
+                        value="{{ search_query or '' }}"
+                        placeholder="Search overdue books..."
+                        autocomplete="off"
+                    >
+
+                    {% if search_query %}
+
+                    <a
+                        href="{{ request.path }}"
+                        class="table-search-clear"
+                        title="Clear search"
+                    >
+                        <i class="bi bi-x"></i>
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-search"></i>
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- Results -->
+        {% if transactions %}
+
+        <div class="readonly-table-wrapper">
+
+            <table class="readonly-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Book</th>
+                        <th>Employee</th>
+                        <th>Issue Date</th>
+                        <th>Due Date</th>
+                        <th>Days Overdue</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for transaction in transactions %}
+
+                    <tr>
+
+                        <!-- Book -->
+                        <td>
+
+                            <strong>
+                                {{ transaction.book.book_code }}
+                            </strong>
+
+                            <small>
+                                {{ transaction.book.title }}
+                            </small>
+
+                        </td>
+
+
+                        <!-- Employee -->
+                        <td>
+
+                            <strong>
+                                {{ transaction.employee.employee_code }}
+                            </strong>
+
+                            <small>
+                                {{ transaction.employee.name }}
+                            </small>
+
+                        </td>
+
+
+                        <!-- Issue Date -->
+                        <td>
+                            {{ transaction.issue_date.strftime("%d %b %Y") }}
+                        </td>
+
+
+                        <!-- Due Date -->
+                        <td>
+
+                            <span class="overdue-date">
+                                {{ transaction.due_date.strftime("%d %b %Y") }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- Days Overdue -->
+                        <td>
+
+                            <span class="days-overdue">
+
+                                <i class="bi bi-exclamation-circle"></i>
+
+                                {{ (today - transaction.due_date).days }}
+
+                                day{% if (today - transaction.due_date).days != 1 %}s{% endif %}
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <!-- Empty / Search Result State -->
+        {% if search_query %}
+
+        <div class="readonly-empty">
+
+            <i class="bi bi-search"></i>
+
+            <strong>No Overdue Books Found</strong>
+
+            <span>
+                No overdue books matched
+                <strong>"{{ search_query }}"</strong>.
+            </span>
+
+            <a
+                href="{{ request.path }}"
+                class="btn btn-light"
+            >
+                <i class="bi bi-x-circle"></i>
+                Clear Search
+            </a>
+
+        </div>
+
+        {% else %}
+
+        <div class="readonly-empty success-empty">
+
+            <i class="bi bi-check-circle"></i>
+
+            <strong>No overdue books</strong>
+
+            <span>
+                Excellent! All issued books are within their due dates.
+            </span>
+
+        </div>
+
+        {% endif %}
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}  

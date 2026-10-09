@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}Issued Books{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="page-header">
+
+        <div>
+            <h1>
+                Issued Books
+            </h1>
+        </div>
+
+
+        <a
+            href="{{ url_for('main.index') }}"
+            class="btn btn-light"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         ISSUED BOOKS PANEL
+    ====================================================== -->
+
+    <div class="dashboard-panel readonly-panel">
+
+        <!-- Panel Header -->
+
+        <div class="readonly-panel-header">
+
+            <div>
+
+                <h2>
+                    Currently Issued
+                </h2>
+
+                <p>
+
+                    {% if search_query %}
+
+                        Search results for
+                        <strong>
+                            "{{ search_query }}"
+                        </strong>
+
+                    {% else %}
+
+                        {{ transactions|length }} active issue(s)
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 SEARCH
+            ================================================== -->
+
+            <form
+                method="GET"
+                class="table-search-form"
+            >
+
+                <div class="table-search-box">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        name="q"
+                        value="{{ search_query or '' }}"
+                        placeholder="Search issued books..."
+                        autocomplete="off"
+                    >
+
+                    {% if search_query %}
+
+                    <a
+                        href="{{ request.path }}"
+                        class="table-search-clear"
+                        title="Clear search"
+                    >
+                        <i class="bi bi-x"></i>
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-search"></i>
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- =====================================================
+             RESULTS
+        ====================================================== -->
+
+        {% if transactions %}
+
+        <div class="readonly-table-wrapper">
+
+            <table class="readonly-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Book
+                        </th>
+
+                        <th>
+                            Employee
+                        </th>
+
+                        <th>
+                            Issue Date
+                        </th>
+
+                        <th>
+                            Due Date
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for transaction in transactions %}
+
+                    <tr>
+
+                        <!-- Book -->
+
+                        <td>
+
+                            <strong>
+                                {{ transaction.book.book_code }}
+                            </strong>
+
+                            <small>
+                                {{ transaction.book.title }}
+                            </small>
+
+                        </td>
+
+
+                        <!-- Employee -->
+
+                        <td>
+
+                            <strong>
+                                {{ transaction.employee.employee_code }}
+                            </strong>
+
+                            <small>
+                                {{ transaction.employee.name }}
+                            </small>
+
+                        </td>
+
+
+                        <!-- Issue Date -->
+
+                        <td>
+                            {{ transaction.issue_date.strftime("%d %b %Y") }}
+                        </td>
+
+
+                        <!-- Due Date -->
+
+                        <td>
+                            {{ transaction.due_date.strftime("%d %b %Y") }}
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td>
+
+                            {% if transaction.due_date < today %}
+
+                            <span class="status-badge status-overdue">
+
+                                <i class="bi bi-exclamation-circle"></i>
+
+                                Overdue
+
+                            </span>
+
+                            {% else %}
+
+                            <span class="status-badge status-issued">
+
+                                <i class="bi bi-clock"></i>
+
+                                Issued
+
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+
+        <!-- =====================================================
+             EMPTY / SEARCH RESULT STATE
+        ====================================================== -->
+
+        {% if search_query %}
+
+        <div class="readonly-empty">
+
+            <i class="bi bi-search"></i>
+
+            <strong>
+                No Issued Books Found
+            </strong>
+
+            <span>
+                No active book transactions matched
+                <strong>
+                    "{{ search_query }}"
+                </strong>.
+            </span>
+
+            <a
+                href="{{ request.path }}"
+                class="btn btn-light"
+            >
+                <i class="bi bi-x-circle"></i>
+                Clear Search
+            </a>
+
+        </div>
+
+
+        {% else %}
+
+
+        <div class="readonly-empty">
+
+            <i class="bi bi-journal-check"></i>
+
+            <strong>
+                No books are currently issued
+            </strong>
+
+            <span>
+                There are no active book transactions.
+            </span>
+
+        </div>
+
+        {% endif %}
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

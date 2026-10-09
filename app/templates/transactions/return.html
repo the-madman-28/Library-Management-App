@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block title %}Return Book{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container issue-page">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Return Book
+            </h1>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('main.index') }}"
+            class="btn btn-light"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Dashboard
+        </a>
+
+    </div>
+
+    {% if transactions %}
+
+    <div class="issue-workspace">
+
+        <!-- =====================================================
+             RETURN FORM
+        ====================================================== -->
+
+        <div class="card issue-form-panel">
+
+            <div class="issue-panel-header">
+
+                <div class="issue-panel-icon">
+                    <i class="bi bi-arrow-return-left"></i>
+                </div>
+
+                <div>
+                    <h2>Book Return</h2>
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                class="issue-form"
+            >
+
+                <!-- =================================================
+                     TRANSACTION SELECTION
+                ================================================== -->
+
+                <div class="issue-form-section">
+
+                    <div class="issue-section-heading">
+
+                        <div class="issue-section-number">
+                            
+                        </div>
+
+                        <div>
+                            <h3>Select Issued Book <span>*</span></h3>
+                        </div>
+
+                    </div>
+
+                    <div class="issue-input-wrapper">
+
+                        <select
+                            class="issue-select searchable-select"
+                            id="transaction_id"
+                            name="transaction_id"
+                            required
+                            data-search-placeholder="Search book, employee, or code..."
+                        >
+
+                            <option value="">
+                            </option>
+
+                            {% for transaction in transactions %}
+
+                            <option value="{{ transaction.id }}">
+                                {{ transaction.book.book_code }}
+                                -
+                                {{ transaction.book.title }}
+                                |
+                                Borrowed by:
+                                {{ transaction.employee.employee_code }}
+                                - {{ transaction.employee.name }}
+                                |
+                                Due:
+                                {{ transaction.due_date }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <!-- =================================================
+                     ACTIONS
+                ================================================== -->
+
+                <div class="issue-form-actions">
+
+                    <a
+                        href="{{ url_for('main.index') }}"
+                        class="btn btn-light issue-cancel-button"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-success issue-submit-button"
+                    >
+                        <i class="bi bi-arrow-return-left"></i>
+                        Return Book
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- =====================================================
+             INFORMATION PANEL
+        ====================================================== -->
+
+        <aside class="issue-info-panel">
+
+            <!-- Current Transactions -->
+
+            <div class="issue-info-card">
+
+                <div class="issue-info-card-header">
+
+                    <div class="issue-info-card-icon">
+                        <i class="bi bi-journal-check"></i>
+                    </div>
+
+                    <div>
+                        <h3>Active Loans</h3>
+
+                        <p>
+                            Currently issued books
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="issue-info-list">
+
+                    <div class="issue-info-item">
+
+                        <span>
+                            <i class="bi bi-book"></i>
+                            Issued Books
+                        </span>
+
+                        <strong>
+                            {{ transactions|length }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+
+    {% else %}
+
+    <!-- =========================================================
+         EMPTY STATE
+    ========================================================== -->
+
+    <div class="card return-empty-state">
+
+        <div class="return-empty-icon">
+            <i class="bi bi-journal-check"></i>
+        </div>
+
+        <h2>No Issued Books</h2>
+
+        <p>
+            There are currently no issued books available to return.
+        </p>
+
+        <a
+            href="{{ url_for('main.index') }}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to Dashboard
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =========================================================
+     TOM SELECT
+========================================================== -->
+
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.bootstrap5.min.css"
+>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js">
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const transactionSelect = document.getElementById("transaction_id");
+
+    if (!transactionSelect) {
+        return;
+    }
+
+    new TomSelect(transactionSelect, {
+        create: false,
+        allowEmptyOption: true,
+
+        placeholder: "Search book, employee, or code...",
+
+        maxOptions: 500,
+
+        searchField: [
+            "text"
+        ],
+
+        sortField: {
+            field: "text",
+            direction: "asc"
+        },
+
+        closeAfterSelect: true,
+
+        plugins: [
+            "clear_button"
+        ]
+    });
+
+});
+</script>
+
+{% endblock %}
