@@ -16,6 +16,14 @@
         <div class="employees-header-actions">
 
             <a
+            href="{{ url_for('main.index') }}"
+            class="btn btn-light"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Dashboard
+        </a>
+
+            <a
                 href="{{ url_for('employees.add_employee') }}"
                 class="employees-add-button"
             >

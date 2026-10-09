@@ -12,18 +12,103 @@
    PAGE HEADER
    ========================================================= */
 
-.employees-header-actions {
+.employees-page .dashboard-page-header,
+.employee-form-page .dashboard-page-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 28px;
 }
 
-.employees-add-button {
+.employees-page .dashboard-page-header > div:first-child,
+.employee-form-page .dashboard-page-header > div:first-child {
+    flex: 1;
+    min-width: 0;
+}
+
+.employees-page .dashboard-page-header h1,
+.employee-form-page .dashboard-page-header h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text);
+}
+
+
+/* =========================================================
+   EMPLOYEES HEADER ACTIONS
+   ========================================================= */
+
+.employees-page .employees-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.employees-page .employees-header-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   DASHBOARD BUTTON
+   ========================================================= */
+
+.employees-page .employees-header-actions .btn-light {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 40px;
+    padding: 9px 16px;
+
+    background: #ffffff;
+    color: #212529;
+
+    border: 1px solid #d9dee3;
+    border-radius: 8px;
+
+    text-decoration: none;
+    white-space: nowrap;
+
+    box-shadow: none;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.employees-page .employees-header-actions .btn-light:hover {
+    background: #f8f9fa;
+    color: #212529;
+    border-color: #c9ced4;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   ADD EMPLOYEE BUTTON
+   ========================================================= */
+
+.employees-page .employees-header-actions .employees-add-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
 
+    min-height: 40px;
     padding: 11px 18px;
 
     border: none;
@@ -43,7 +128,7 @@
         box-shadow 0.2s ease;
 }
 
-.employees-add-button:hover {
+.employees-page .employees-header-actions .employees-add-button:hover {
     background: #0b5ed7;
     color: #ffffff;
 
@@ -52,7 +137,7 @@
     box-shadow: 0 5px 14px rgba(13, 110, 253, 0.22);
 }
 
-.employees-add-button i {
+.employees-page .employees-header-actions .employees-add-button i {
     font-size: 16px;
 }
 
@@ -107,13 +192,13 @@
 }
 
 .employee-table-name span {
-    color: #64748b;
-
-    font-size: 12px;
-
     max-width: 220px;
 
     overflow: hidden;
+
+    color: #64748b;
+    font-size: 12px;
+
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -168,13 +253,11 @@
     gap: 6px;
 
     color: #475569;
-
     font-size: 13px;
 }
 
 .employee-contact i {
     color: #64748b;
-
     font-size: 12px;
 }
 
@@ -351,6 +434,57 @@
 
 
 /* =========================================================
+   EMPLOYEE FORM HEADER ACTIONS
+   ========================================================= */
+
+.employee-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.employee-header-actions .btn-light {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 40px;
+    padding: 9px 16px;
+
+    background: #ffffff;
+    color: #212529;
+
+    border: 1px solid #d9dee3;
+    border-radius: 8px;
+
+    text-decoration: none;
+    white-space: nowrap;
+
+    box-shadow: none;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.employee-header-actions .btn-light:hover {
+    background: #f8f9fa;
+    color: #212529;
+    border-color: #c9ced4;
+    transform: translateY(-1px);
+}
+
+.employee-header-actions .btn-light i {
+    font-size: 15px;
+}
+
+
+/* =========================================================
    RESPONSIVE
    ========================================================= */
 
@@ -359,7 +493,6 @@
     .employees-table {
         min-width: 950px;
     }
-
 }
 
 
@@ -367,44 +500,63 @@
 
     .employees-page .dashboard-page-header {
         align-items: flex-start;
-        gap: 20px;
-    }
-
-    .employees-header-actions {
-        flex-shrink: 0;
     }
 
     .employees-table {
         min-width: 900px;
     }
-
 }
 
 
 @media (max-width: 700px) {
 
-    .employees-page .dashboard-page-header {
+    .employees-page .dashboard-page-header,
+    .employee-form-page .dashboard-page-header {
         flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
     }
 
-    .employees-header-actions {
+    .employees-page .employees-header-actions,
+    .employee-header-actions {
         width: 100%;
+        justify-content: flex-start;
     }
 
-    .employees-add-button {
+    .employees-page .employees-header-actions {
+        flex-wrap: wrap;
+    }
+
+    .employees-page .employees-add-button {
         width: 100%;
     }
 
     .employees-table {
         min-width: 850px;
     }
-
 }
 
 
 @media (max-width: 480px) {
 
-    .employees-add-button {
+    .employees-page .employees-header-actions,
+    .employee-header-actions {
+        width: 100%;
+    }
+
+    .employees-page .employees-header-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .employees-page .employees-header-actions .btn-light,
+    .employees-page .employees-header-actions .employees-add-button,
+    .employee-header-actions .btn-light {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .employees-page .employees-add-button {
         padding: 10px 14px;
         font-size: 13px;
     }
@@ -418,5 +570,4 @@
     .employee-delete-button {
         width: 100%;
     }
-
 }

@@ -11,36 +11,28 @@
     ====================================================== -->
 
     <div class="dashboard-page-header">
-
-        <div>
-
-            <h1>Books Master</h1>
-
-        </div>
-
-
-        <div class="books-header-actions">
-
-            <a
-                href="{{ url_for('main.index') }}"
-                class="btn btn-light"
-            >
-                <i class="bi bi-arrow-left"></i>
-                Dashboard
-            </a>
-
-
-            <a
-                href="{{ url_for('books.add_book') }}"
-                class="btn btn-primary books-add-button"
-            >
-                <i class="bi bi-plus-circle"></i>
-                Add Book
-            </a>
-
-        </div>
-
+    <div>
+        <h1>Books Master</h1>
     </div>
+
+    <div class="books-header-actions">
+        <a
+            href="{{ url_for('main.index') }}"
+            class="btn btn-light"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Dashboard
+        </a>
+
+        <a
+            href="{{ url_for('books.add_book') }}"
+            class="books-add-button"
+        >
+            <i class="bi bi-plus-circle"></i>
+            Add Book
+        </a>
+    </div>
+</div>
 
 
     <!-- =====================================================

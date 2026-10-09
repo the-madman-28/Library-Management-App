@@ -1,30 +1,155 @@
 /* =========================================================
    BOOKS PAGE
-========================================================= */
+   ========================================================= */
 
-.books-header-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.books-page {
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 
-.books-add-button {
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.books-page .dashboard-page-header,
+.book-form-page .dashboard-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 28px;
+}
+
+.books-page .dashboard-page-header > div:first-child,
+.book-form-page .dashboard-page-header > div:first-child {
+    flex: 1;
+    min-width: 0;
+}
+
+.books-page .dashboard-page-header h1,
+.book-form-page .dashboard-page-header h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text);
+}
+
+
+/* =========================================================
+   LIST PAGE HEADER ACTIONS
+   ========================================================= */
+
+.books-page .books-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.books-page .books-header-actions a {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    gap: 7px;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   DASHBOARD BUTTON
+   ========================================================= */
+
+.books-page .books-header-actions .btn-light {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 40px;
+    padding: 9px 16px;
+
+    background: #ffffff;
+    color: #212529;
+
+    border: 1px solid #d9dee3;
+    border-radius: 8px;
+
+    text-decoration: none;
+    white-space: nowrap;
+
+    box-shadow: none;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.books-page .books-header-actions .btn-light:hover {
+    background: #f8f9fa;
+    color: #212529;
+    border-color: #c9ced4;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   ADD BOOK BUTTON
+   ========================================================= */
+
+.books-page .books-header-actions .books-add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
+
+    min-height: 40px;
+    padding: 11px 18px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #0d6efd;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.books-page .books-header-actions .books-add-button:hover {
+    background: #0b5ed7;
+    color: #ffffff;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 5px 14px rgba(13, 110, 253, 0.22);
+}
+
+.books-page .books-header-actions .books-add-button i {
+    font-size: 16px;
 }
 
 
 /* =========================================================
    BOOK TABLE
-========================================================= */
+   ========================================================= */
 
 .books-table th:last-child,
 .books-table td:last-child {
     min-width: 175px;
 }
-
 
 .book-code-badge {
     display: inline-flex;
@@ -35,7 +160,6 @@
     border-radius: 7px;
 
     background: #eff6ff;
-
     color: #1d4ed8;
 
     font-size: 11px;
@@ -44,11 +168,9 @@
     letter-spacing: 0.3px;
 }
 
-
 .book-table-title {
     min-width: 180px;
 }
-
 
 .book-table-title strong {
     color: #1f2937;
@@ -58,7 +180,6 @@
 
     line-height: 1.4;
 }
-
 
 .book-category-badge {
     display: inline-block;
@@ -72,7 +193,6 @@
     border-radius: 6px;
 
     background: #f3f4f6;
-
     color: #4b5563;
 
     font-size: 11px;
@@ -81,11 +201,9 @@
     white-space: nowrap;
 }
 
-
 .table-muted {
     color: #9ca3af;
 }
-
 
 .book-count {
     font-weight: 600;
@@ -95,7 +213,7 @@
 
 /* =========================================================
    AVAILABILITY
-========================================================= */
+   ========================================================= */
 
 .availability-badge {
     display: inline-flex;
@@ -110,12 +228,10 @@
     font-weight: 700;
 }
 
-
 .availability-badge.available {
     background: #ecfdf5;
     color: #15803d;
 }
-
 
 .availability-badge.unavailable {
     background: #fef2f2;
@@ -125,7 +241,7 @@
 
 /* =========================================================
    ACTIONS
-========================================================= */
+   ========================================================= */
 
 .book-actions {
     display: flex;
@@ -135,13 +251,11 @@
     white-space: nowrap;
 }
 
-
 .book-actions .btn {
     display: inline-flex;
     align-items: center;
     gap: 5px;
 }
-
 
 .book-delete-form {
     display: inline;
@@ -151,7 +265,7 @@
 
 /* =========================================================
    EMPTY STATE
-========================================================= */
+   ========================================================= */
 
 .books-empty-icon {
     width: 58px;
@@ -166,7 +280,6 @@
     border-radius: 14px;
 
     background: #eff6ff;
-
     color: #2563eb;
 
     font-size: 24px;
@@ -174,61 +287,111 @@
 
 
 /* =========================================================
+   BOOK FORM HEADER ACTIONS
+   ========================================================= */
+
+.book-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.book-header-actions .btn-light {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 40px;
+    padding: 9px 16px;
+
+    background: #ffffff;
+    color: #212529;
+
+    border: 1px solid #d9dee3;
+    border-radius: 8px;
+
+    text-decoration: none;
+    white-space: nowrap;
+
+    box-shadow: none;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.book-header-actions .btn-light:hover {
+    background: #f8f9fa;
+    color: #212529;
+    border-color: #c9ced4;
+    transform: translateY(-1px);
+}
+
+.book-header-actions .btn-light i {
+    font-size: 15px;
+}
+
+
+/* =========================================================
    RESPONSIVE
-========================================================= */
+   ========================================================= */
 
 @media (max-width: 900px) {
 
-    .books-header-actions {
-        flex-wrap: wrap;
+    .books-page .dashboard-page-header {
+        align-items: flex-start;
     }
-
 }
 
 
 @media (max-width: 700px) {
 
-    .dashboard-page-header {
+    .books-page .dashboard-page-header,
+    .book-form-page .dashboard-page-header {
+        flex-direction: column;
         align-items: flex-start;
+        gap: 16px;
     }
 
-
-    .books-header-actions {
+    .books-page .books-header-actions,
+    .book-header-actions {
         width: 100%;
+        justify-content: flex-start;
     }
 
-
-    .books-add-button {
-        flex: 1;
-        justify-content: center;
+    .books-page .books-header-actions {
+        flex-wrap: wrap;
     }
-
 }
 
 
 @media (max-width: 480px) {
 
-    .books-header-actions {
+    .books-page .books-header-actions,
+    .book-header-actions {
+        width: 100%;
         flex-direction: column;
         align-items: stretch;
     }
 
-
-    .books-header-actions .dashboard-back-button,
-    .books-add-button {
+    .books-page .books-header-actions .btn-light,
+    .books-page .books-header-actions .books-add-button,
+    .book-header-actions .btn-light {
         width: 100%;
         justify-content: center;
     }
-
 
     .book-actions {
         flex-direction: column;
         align-items: stretch;
     }
 
-
     .book-actions .btn {
         justify-content: center;
     }
-
 }
