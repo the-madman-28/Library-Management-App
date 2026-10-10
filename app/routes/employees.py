@@ -4,9 +4,10 @@ from flask import (
     request,
     redirect,
     url_for,
-    flash
+    flash,
 )
 
+from flask_login import login_required, current_user
 from sqlalchemy import or_
 
 from app.extensions import db
@@ -16,7 +17,7 @@ from app.models import Employee, BookTransaction
 employees_bp = Blueprint(
     "employees",
     __name__,
-    url_prefix="/employees"
+    url_prefix="/employees",
 )
 
 
@@ -25,14 +26,17 @@ employees_bp = Blueprint(
 # ============================================================
 
 @employees_bp.route("/")
+@login_required
 def list_employees():
 
     search_query = request.args.get(
         "q",
-        ""
+        "",
     ).strip()
 
-    query = Employee.query
+    query = Employee.query.filter_by(
+        library_id=current_user.library_id
+    )
 
     # Database-side search
     if search_query:
@@ -46,7 +50,7 @@ def list_employees():
                 Employee.department.ilike(search),
                 Employee.designation.ilike(search),
                 Employee.email.ilike(search),
-                Employee.phone.ilike(search)
+                Employee.phone.ilike(search),
             )
         )
 
@@ -57,7 +61,7 @@ def list_employees():
     return render_template(
         "employees/list.html",
         employees=employees,
-        search_query=search_query
+        search_query=search_query,
     )
 
 
@@ -67,14 +71,17 @@ def list_employees():
 # ============================================================
 
 @employees_bp.route("/overview")
+@login_required
 def employees_overview():
 
     search_query = request.args.get(
         "q",
-        ""
+        "",
     ).strip()
 
-    query = Employee.query
+    query = Employee.query.filter_by(
+        library_id=current_user.library_id
+    )
 
     # Database-side search
     if search_query:
@@ -88,7 +95,7 @@ def employees_overview():
                 Employee.department.ilike(search),
                 Employee.designation.ilike(search),
                 Employee.email.ilike(search),
-                Employee.phone.ilike(search)
+                Employee.phone.ilike(search),
             )
         )
 
@@ -99,7 +106,7 @@ def employees_overview():
     return render_template(
         "employees/overview.html",
         employees=employees,
-        search_query=search_query
+        search_query=search_query,
     )
 
 
@@ -109,47 +116,47 @@ def employees_overview():
 
 @employees_bp.route(
     "/add",
-    methods=["GET", "POST"]
+    methods=["GET", "POST"],
 )
+@login_required
 def add_employee():
 
     if request.method == "POST":
 
         employee_code = request.form.get(
             "employee_code",
-            ""
+            "",
         ).strip()
 
         name = request.form.get(
             "name",
-            ""
+            "",
         ).strip()
 
         department = request.form.get(
             "department",
-            ""
+            "",
         ).strip()
 
         designation = request.form.get(
             "designation",
-            ""
+            "",
         ).strip()
 
         email = request.form.get(
             "email",
-            ""
+            "",
         ).strip()
 
         phone = request.form.get(
             "phone",
-            ""
+            "",
         ).strip()
 
         status = request.form.get(
             "status",
-            "ACTIVE"
+            "ACTIVE",
         ).strip()
-
 
         # ----------------------------------------------------
         # REQUIRED FIELDS
@@ -159,61 +166,60 @@ def add_employee():
 
             flash(
                 "Employee code and name are required.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "employees/add.html"
             )
 
-
         # ----------------------------------------------------
         # DUPLICATE EMPLOYEE CODE
+        # Only within the current library
         # ----------------------------------------------------
 
         existing_employee = Employee.query.filter_by(
-            employee_code=employee_code
+            library_id=current_user.library_id,
+            employee_code=employee_code,
         ).first()
 
         if existing_employee:
 
             flash(
                 "An employee with this code already exists.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "employees/add.html"
             )
 
-
         # ----------------------------------------------------
         # CREATE EMPLOYEE
         # ----------------------------------------------------
 
         employee = Employee(
+            library_id=current_user.library_id,
             employee_code=employee_code,
             name=name,
             department=department or None,
             designation=designation or None,
             email=email or None,
             phone=phone or None,
-            status=status
+            status=status,
         )
 
         db.session.add(employee)
         db.session.commit()
 
-
         flash(
             "Employee added successfully.",
-            "success"
+            "success",
         )
 
         return redirect(
             url_for("employees.list_employees")
         )
-
 
     return render_template(
         "employees/add.html"
@@ -226,51 +232,55 @@ def add_employee():
 
 @employees_bp.route(
     "/<int:employee_id>/edit",
-    methods=["GET", "POST"]
+    methods=["GET", "POST"],
 )
+@login_required
 def edit_employee(employee_id):
 
-    employee = Employee.query.get_or_404(
-        employee_id
-    )
+    # Only retrieve an employee belonging to
+    # the current user's library.
+
+    employee = Employee.query.filter_by(
+        id=employee_id,
+        library_id=current_user.library_id,
+    ).first_or_404()
 
     if request.method == "POST":
 
         employee_code = request.form.get(
             "employee_code",
-            ""
+            "",
         ).strip()
 
         name = request.form.get(
             "name",
-            ""
+            "",
         ).strip()
 
         department = request.form.get(
             "department",
-            ""
+            "",
         ).strip()
 
         designation = request.form.get(
             "designation",
-            ""
+            "",
         ).strip()
 
         email = request.form.get(
             "email",
-            ""
+            "",
         ).strip()
 
         phone = request.form.get(
             "phone",
-            ""
+            "",
         ).strip()
 
         status = request.form.get(
             "status",
-            "ACTIVE"
+            "ACTIVE",
         ).strip()
-
 
         # ----------------------------------------------------
         # REQUIRED FIELDS
@@ -280,36 +290,36 @@ def edit_employee(employee_id):
 
             flash(
                 "Employee code and name are required.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "employees/edit.html",
-                employee=employee
+                employee=employee,
             )
 
-
-        # ---------------- ------------------------------------
+        # ----------------------------------------------------
         # DUPLICATE EMPLOYEE CODE
+        # Only within the current library
         # ----------------------------------------------------
 
         existing_employee = Employee.query.filter(
+            Employee.library_id == current_user.library_id,
             Employee.employee_code == employee_code,
-            Employee.id != employee.id
+            Employee.id != employee.id,
         ).first()
 
         if existing_employee:
 
             flash(
                 "Another employee with this code already exists.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "employees/edit.html",
-                employee=employee
+                employee=employee,
             )
-
 
         # ----------------------------------------------------
         # UPDATE EMPLOYEE
@@ -325,20 +335,18 @@ def edit_employee(employee_id):
 
         db.session.commit()
 
-
         flash(
             "Employee updated successfully.",
-            "success"
+            "success",
         )
 
         return redirect(
             url_for("employees.list_employees")
         )
 
-
     return render_template(
         "employees/edit.html",
-        employee=employee
+        employee=employee,
     )
 
 
@@ -348,21 +356,26 @@ def edit_employee(employee_id):
 
 @employees_bp.route(
     "/<int:employee_id>/delete",
-    methods=["POST"]
+    methods=["POST"],
 )
+@login_required
 def delete_employee(employee_id):
 
-    employee = Employee.query.get_or_404(
-        employee_id
-    )
+    # Only retrieve an employee belonging to
+    # the current user's library.
 
+    employee = Employee.query.filter_by(
+        id=employee_id,
+        library_id=current_user.library_id,
+    ).first_or_404()
 
     # ----------------------------------------------------
     # BLOCK DELETE IF EMPLOYEE HAS AN ACTIVE TRANSACTION
     # ----------------------------------------------------
 
     active_transaction = BookTransaction.query.filter_by(
-        employee_id=employee.id
+        employee_id=employee.id,
+        library_id=current_user.library_id,
     ).first()
 
     if active_transaction:
@@ -371,13 +384,12 @@ def delete_employee(employee_id):
             f"Cannot delete '{employee.name}' because "
             f"they currently have a book issued to them "
             f"that has not been returned.",
-            "danger"
+            "danger",
         )
 
         return redirect(
             url_for("employees.list_employees")
         )
-
 
     # ----------------------------------------------------
     # DELETE EMPLOYEE
@@ -386,10 +398,9 @@ def delete_employee(employee_id):
     db.session.delete(employee)
     db.session.commit()
 
-
     flash(
         "Employee deleted successfully.",
-        "success"
+        "success",
     )
 
     return redirect(

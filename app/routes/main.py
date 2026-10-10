@@ -1,13 +1,14 @@
 from datetime import date
 
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for
+from flask_login import login_required, current_user
 
 from app.extensions import db
 from app.models import (
     Book,
     Employee,
     BookTransaction,
-    TransactionHistory
+    TransactionHistory,
 )
 
 
@@ -17,40 +18,69 @@ main_bp = Blueprint(
 )
 
 
+# =========================================================
+# PUBLIC LANDING PAGE
+# =========================================================
+
 @main_bp.route("/")
 def index():
+    if current_user.is_authenticated:
+        return redirect(url_for("main.dashboard"))
+
+    return render_template("index.html")
+
+
+# =========================================================
+# AUTHENTICATED DASHBOARD
+# =========================================================
+
+@main_bp.route("/dashboard")
+@login_required
+def dashboard():
 
     today_date = date.today()
+
+    # =========================================
+    # CURRENT USER'S LIBRARY
+    # =========================================
+
+    library_id = current_user.library_id
 
     # =========================================
     # DASHBOARD STATISTICS
     # =========================================
 
-    # Total number of books in the library
-    total_books = Book.query.count()
+    total_books = Book.query.filter_by(
+        library_id=library_id
+    ).count()
 
-    # Total number of available copies
     available_books = (
         db.session.query(
             db.func.sum(Book.available_copies)
-        ).scalar()
+        )
+        .filter(
+            Book.library_id == library_id
+        )
+        .scalar()
         or 0
     )
 
-    # Total employees
-    total_employees = Employee.query.count()
+    total_employees = Employee.query.filter_by(
+        library_id=library_id
+    ).count()
 
-    # Currently issued books
-    issued_books = BookTransaction.query.count()
+    issued_books = BookTransaction.query.filter_by(
+        library_id=library_id
+    ).count()
 
-    # Currently overdue books
     overdue_books = BookTransaction.query.filter(
+        BookTransaction.library_id == library_id,
         BookTransaction.due_date < today_date
     ).count()
 
-    # Permanent all-time transaction history
-    all_time_transactions = TransactionHistory.query.count()
-
+    all_time_transactions = TransactionHistory.query.filter_by(
+        library_id=library_id
+    ).count()
 
     # =========================================
     # RENDER DASHBOARD

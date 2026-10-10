@@ -6,9 +6,9 @@ from flask import (
     request,
     redirect,
     url_for,
-    flash
+    flash,
 )
-
+from flask_login import login_required, current_user
 from sqlalchemy import or_
 
 from app.extensions import db
@@ -16,14 +16,14 @@ from app.models import (
     Book,
     Employee,
     BookTransaction,
-    TransactionHistory
+    TransactionHistory,
 )
 
 
 transactions_bp = Blueprint(
     "transactions",
     __name__,
-    url_prefix="/transactions"
+    url_prefix="/transactions",
 )
 
 
@@ -35,154 +35,128 @@ transactions_bp = Blueprint(
     "/issue",
     methods=["GET", "POST"]
 )
+@login_required
 def issue_book():
+
+    library_id = current_user.library_id
 
     if request.method == "POST":
 
-        book_id = request.form.get(
-            "book_id"
-        )
+        book_id = request.form.get("book_id")
+        employee_id = request.form.get("employee_id")
 
-        employee_id = request.form.get(
-            "employee_id"
-        )
-
-        issue_date = request.form.get(
-            "issue_date"
-        )
-
-        due_date = request.form.get(
-            "due_date"
-        )
+        issue_date = request.form.get("issue_date")
+        due_date = request.form.get("due_date")
 
         remarks = request.form.get(
             "remarks",
             ""
         ).strip()
 
-
         # -------------------------------------------------
         # BASIC VALIDATION
         # -------------------------------------------------
 
         if not book_id or not employee_id:
-
             flash(
                 "Please select both an employee and a book.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.issue_book")
             )
 
-
         if not issue_date or not due_date:
-
             flash(
                 "Issue date and due date are required.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.issue_book")
             )
 
-
         # -------------------------------------------------
-        # GET BOOK AND EMPLOYEE
+        # VALIDATE IDS
         # -------------------------------------------------
 
         try:
-
             book_id_value = int(book_id)
             employee_id_value = int(employee_id)
 
         except (TypeError, ValueError):
-
             flash(
                 "Invalid book or employee selection.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.issue_book")
             )
 
+        # -------------------------------------------------
+        # GET BOOK AND EMPLOYEE
+        # IMPORTANT:
+        # Both must belong to current user's library.
+        # -------------------------------------------------
 
-        book = db.session.get(
-            Book,
-            book_id_value
-        )
+        book = Book.query.filter_by(
+            id=book_id_value,
+            library_id=library_id,
+        ).first()
 
-        employee = db.session.get(
-            Employee,
-            employee_id_value
-        )
-
+        employee = Employee.query.filter_by(
+            id=employee_id_value,
+            library_id=library_id,
+        ).first()
 
         if not book:
-
             flash(
                 "Selected book does not exist.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.issue_book")
             )
 
-
         if not employee:
-
             flash(
                 "Selected employee does not exist.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.issue_book")
             )
-
 
         # -------------------------------------------------
         # EMPLOYEE VALIDATION
         # -------------------------------------------------
 
         if employee.status != "ACTIVE":
-
             flash(
                 "This employee is inactive and cannot borrow books.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.issue_book")
             )
-
 
         # -------------------------------------------------
         # BOOK AVAILABILITY
         # -------------------------------------------------
 
         if book.available_copies <= 0:
-
             flash(
                 "This book currently has no available copies.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.issue_book")
             )
-
 
         # -------------------------------------------------
         # DATE VALIDATION
         # -------------------------------------------------
 
         try:
-
             issue_date_obj = date.fromisoformat(
                 issue_date
             )
@@ -192,52 +166,38 @@ def issue_book():
             )
 
         except ValueError:
-
             flash(
                 "Please enter valid dates.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.issue_book")
             )
 
-
         if due_date_obj < issue_date_obj:
-
             flash(
                 "Due date cannot be before the issue date.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.issue_book")
             )
-
 
         # =================================================
         # CREATE PERMANENT HISTORY RECORD
         # =================================================
 
         history = TransactionHistory(
-
+            library_id=library_id,
             book_code=book.book_code,
-
             book_title=book.title,
-
             employee_code=employee.employee_code,
-
             employee_name=employee.name,
-
             issue_date=issue_date_obj,
-
             due_date=due_date_obj,
-
             return_date=None,
-
             status="ISSUED",
-
-            remarks=remarks or None
+            remarks=remarks or None,
         )
 
         db.session.add(history)
@@ -246,26 +206,19 @@ def issue_book():
         # the active transaction.
         db.session.flush()
 
-
         # =================================================
         # CREATE CURRENT ACTIVE TRANSACTION
         # =================================================
 
         transaction = BookTransaction(
-
+            library_id=library_id,
             history_id=history.id,
-
             book_id=book.id,
-
             employee_id=employee.id,
-
             issue_date=issue_date_obj,
-
             due_date=due_date_obj,
-
-            remarks=remarks or None
+            remarks=remarks or None,
         )
-
 
         # =================================================
         # UPDATE INVENTORY
@@ -275,17 +228,14 @@ def issue_book():
 
         db.session.add(transaction)
 
-
         # =================================================
         # COMMIT EVERYTHING TOGETHER
         # =================================================
 
         try:
-
             db.session.commit()
 
         except Exception:
-
             db.session.rollback()
 
             flash(
@@ -297,7 +247,6 @@ def issue_book():
                 url_for("transactions.issue_book")
             )
 
-
         flash(
             f"Book '{book.title}' issued to {employee.name}.",
             "success"
@@ -307,24 +256,23 @@ def issue_book():
             url_for("transactions.issue_book")
         )
 
-
     # =====================================================
     # GET
     # =====================================================
 
     books = Book.query.filter(
-        Book.available_copies > 0
+        Book.library_id == library_id,
+        Book.available_copies > 0,
     ).order_by(
         Book.title.asc()
     ).all()
 
-
-    employees = Employee.query.filter_by(
-        status="ACTIVE"
+    employees = Employee.query.filter(
+        Employee.library_id == library_id,
+        Employee.status == "ACTIVE",
     ).order_by(
         Employee.name.asc()
     ).all()
-
 
     return render_template(
         "transactions/issue.html",
@@ -342,7 +290,10 @@ def issue_book():
     "/return",
     methods=["GET", "POST"]
 )
+@login_required
 def return_book():
+
+    library_id = current_user.library_id
 
     if request.method == "POST":
 
@@ -350,104 +301,103 @@ def return_book():
             "transaction_id"
         )
 
-
         # -------------------------------------------------
         # BASIC VALIDATION
         # -------------------------------------------------
 
         if not transaction_id:
-
             flash(
                 "Please select an issued book.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.return_book")
             )
 
-
         # -------------------------------------------------
         # GET ACTIVE TRANSACTION
+        # IMPORTANT:
+        # Must belong to current user's library.
         # -------------------------------------------------
 
         try:
-
             transaction_id_value = int(
                 transaction_id
             )
 
         except (TypeError, ValueError):
-
             flash(
                 "Invalid transaction selection.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.return_book")
             )
 
-
-        transaction = db.session.get(
-            BookTransaction,
-            transaction_id_value
-        )
-
+        transaction = BookTransaction.query.filter_by(
+            id=transaction_id_value,
+            library_id=library_id,
+        ).first()
 
         if not transaction:
-
             flash(
                 "Transaction not found.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.return_book")
             )
-
 
         # -------------------------------------------------
         # GET RELATED OBJECTS
         # -------------------------------------------------
 
         book = transaction.book
-
         history = transaction.history
 
-
         if not book:
-
             flash(
                 "The associated book could not be found.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.return_book")
             )
 
-
         if not history:
-
             flash(
                 "Transaction history record could not be found.",
                 "danger"
             )
-
             return redirect(
                 url_for("transactions.return_book")
             )
 
+        # Extra tenant-safety checks
+        if book.library_id != library_id:
+            flash(
+                "You are not authorized to access this book.",
+                "danger"
+            )
+            return redirect(
+                url_for("transactions.return_book")
+            )
+
+        if history.library_id != library_id:
+            flash(
+                "You are not authorized to access this transaction history.",
+                "danger"
+            )
+            return redirect(
+                url_for("transactions.return_book")
+            )
 
         # =================================================
         # UPDATE PERMANENT HISTORY
         # =================================================
 
         history.return_date = date.today()
-
         history.status = "RETURNED"
-
 
         # =================================================
         # RESTORE INVENTORY
@@ -455,6 +405,10 @@ def return_book():
 
         book.available_copies += 1
 
+        # Prevent inventory from accidentally exceeding
+        # the book's total number of copies.
+        if book.available_copies > book.total_copies:
+            book.available_copies = book.total_copies
 
         # =================================================
         # REMOVE ACTIVE TRANSACTION
@@ -462,17 +416,14 @@ def return_book():
 
         db.session.delete(transaction)
 
-
         # =================================================
         # COMMIT EVERYTHING TOGETHER
         # =================================================
 
         try:
-
             db.session.commit()
 
         except Exception:
-
             db.session.rollback()
 
             flash(
@@ -485,7 +436,6 @@ def return_book():
                 url_for("transactions.return_book")
             )
 
-
         flash(
             f"Book '{book.title}' returned successfully.",
             "success"
@@ -495,15 +445,15 @@ def return_book():
             url_for("transactions.return_book")
         )
 
-
     # =====================================================
     # GET
     # =====================================================
 
-    transactions = BookTransaction.query.order_by(
+    transactions = BookTransaction.query.filter_by(
+        library_id=library_id
+    ).order_by(
         BookTransaction.due_date.asc()
     ).all()
-
 
     return render_template(
         "transactions/return.html",
@@ -516,15 +466,19 @@ def return_book():
 # =========================================================
 
 @transactions_bp.route("/issued")
+@login_required
 def issued_books():
+
+    library_id = current_user.library_id
 
     search_query = request.args.get(
         "q",
         ""
     ).strip()
 
-    query = BookTransaction.query
-
+    query = BookTransaction.query.filter(
+        BookTransaction.library_id == library_id
+    )
 
     # -----------------------------------------------------
     # DATABASE-SIDE SEARCH
@@ -547,11 +501,9 @@ def issued_books():
             )
         )
 
-
     transactions = query.order_by(
         BookTransaction.due_date.asc()
     ).all()
-
 
     return render_template(
         "transactions/issued.html",
@@ -566,18 +518,20 @@ def issued_books():
 # =========================================================
 
 @transactions_bp.route("/overdue")
+@login_required
 def overdue_books():
+
+    library_id = current_user.library_id
 
     search_query = request.args.get(
         "q",
         ""
     ).strip()
 
-
     query = BookTransaction.query.filter(
+        BookTransaction.library_id == library_id,
         BookTransaction.due_date < date.today()
     )
-
 
     # -----------------------------------------------------
     # DATABASE-SIDE SEARCH
@@ -600,11 +554,9 @@ def overdue_books():
             )
         )
 
-
     transactions = query.order_by(
         BookTransaction.due_date.asc()
     ).all()
-
 
     return render_template(
         "transactions/overdue.html",
@@ -619,16 +571,19 @@ def overdue_books():
 # =========================================================
 
 @transactions_bp.route("/history")
+@login_required
 def transaction_history():
+
+    library_id = current_user.library_id
 
     search_query = request.args.get(
         "q",
         ""
     ).strip()
 
-
-    query = TransactionHistory.query
-
+    query = TransactionHistory.query.filter(
+        TransactionHistory.library_id == library_id
+    )
 
     # -----------------------------------------------------
     # DATABASE-SIDE SEARCH
@@ -649,11 +604,9 @@ def transaction_history():
             )
         )
 
-
     history = query.order_by(
         TransactionHistory.created_at.desc()
     ).all()
-
 
     return render_template(
         "transactions/history.html",

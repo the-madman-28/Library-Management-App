@@ -1,0 +1,417 @@
+/* =========================================================
+   AUTH / LANDING PAGE STYLES
+========================================================= */
+
+
+/* =========================================================
+   LANDING PAGE
+========================================================= */
+
+.landing-container {
+    min-height: calc(100vh - 70px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 50px 24px;
+}
+
+.landing-content {
+    width: 100%;
+    max-width: 850px;
+
+    text-align: center;
+}
+
+.landing-content h1 {
+    margin: 0 0 18px;
+
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.landing-content p {
+    margin: 0 auto 30px;
+
+    max-width: 650px;
+
+    font-size: 18px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   LANDING BUTTONS
+========================================================= */
+
+.landing-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 14px;
+
+    flex-wrap: wrap;
+}
+
+.login-button,
+.register-button {
+    border: none;
+    border-radius: 10px;
+
+    padding: 12px 24px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.login-button:hover,
+.register-button:hover {
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   AUTH MODAL
+========================================================= */
+
+.login-modal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    background: rgba(0, 0, 0, 0.65);
+
+    backdrop-filter: blur(6px);
+}
+
+
+/*
+   Hidden state
+*/
+
+.login-modal[style*="display: none"] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   AUTH CARD
+========================================================= */
+
+.login-card {
+    position: relative;
+
+    width: 100%;
+    max-width: 410px;
+
+    box-sizing: border-box;
+
+    padding: 28px;
+
+    background: #ffffff;
+
+    border: 1px solid rgba(0, 0, 0, 0.08);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.30);
+
+    animation: authModalAppear 0.2s ease-out;
+}
+
+
+/* =========================================================
+   REGISTER CARD
+========================================================= */
+
+.register-card {
+    max-width: 450px;
+
+    padding: 28px;
+}
+
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.login-card h2 {
+    margin: 0 0 6px;
+
+    font-size: 26px;
+    font-weight: 700;
+
+    line-height: 1.2;
+}
+
+.login-card > p {
+    margin: 0 0 20px;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+.login-close {
+    position: absolute;
+
+    top: 12px;
+    right: 12px;
+
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    font-size: 23px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.login-close:hover {
+    background: rgba(0, 0, 0, 0.08);
+
+    transform: rotate(90deg);
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.login-card form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 13px;
+}
+
+.form-group {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.form-group label {
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.form-group input {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    height: 42px;
+
+    padding: 9px 13px;
+
+    border: 1px solid #d6d9df;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+    border-color: #111827;
+
+    box-shadow:
+        0 0 0 3px rgba(17, 24, 39, 0.10);
+}
+
+
+/* =========================================================
+   SUBMIT BUTTON
+========================================================= */
+
+.login-submit {
+    width: 100%;
+
+    margin-top: 3px;
+
+    padding: 11px 18px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #111827;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.login-submit:hover {
+    opacity: 0.92;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 14px rgba(0, 0, 0, 0.16);
+}
+
+
+/* =========================================================
+   LOGIN / REGISTER SWITCH
+========================================================= */
+
+.modal-switch {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    margin-top: 17px;
+
+    font-size: 13px;
+}
+
+.modal-switch button {
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes authModalAppear {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(10px)
+            scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .landing-container {
+        padding: 40px 18px;
+    }
+
+    .landing-content h1 {
+        font-size: 38px;
+    }
+
+    .landing-content p {
+        font-size: 16px;
+    }
+
+    .login-modal {
+        padding: 14px;
+    }
+
+    .login-card,
+    .register-card {
+        width: 100%;
+
+        max-width: 410px;
+
+        padding: 24px 20px;
+
+        border-radius: 17px;
+    }
+
+    .login-card h2 {
+        font-size: 24px;
+    }
+
+    .form-group input {
+        height: 41px;
+    }
+}

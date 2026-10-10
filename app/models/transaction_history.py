@@ -11,6 +11,13 @@ class TransactionHistory(db.Model):
         primary_key=True
     )
 
+    library_id = db.Column(
+        db.Integer,
+        db.ForeignKey("libraries.id"),
+        nullable=False,
+        index=True
+    )
+
     book_code = db.Column(
         db.String(50),
         nullable=False
@@ -61,6 +68,32 @@ class TransactionHistory(db.Model):
         db.DateTime(timezone=True),
         nullable=False,
         default=lambda: datetime.now(timezone.utc)
+    )
+
+    # -----------------------------------------------------
+    # LIBRARY RELATIONSHIP
+    # -----------------------------------------------------
+
+    library = db.relationship(
+        "Library",
+        back_populates="transaction_history"
+    )
+
+    # -----------------------------------------------------
+    # ACTIVE TRANSACTION RELATIONSHIP
+    # -----------------------------------------------------
+    #
+    # A history record can have zero or one active
+    # transaction.
+    #
+    # When a book is returned, the BookTransaction record
+    # is deleted but this history record remains permanently.
+    # -----------------------------------------------------
+
+    active_transaction = db.relationship(
+        "BookTransaction",
+        back_populates="history",
+        uselist=False
     )
 
     def __repr__(self):

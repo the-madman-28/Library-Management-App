@@ -4,9 +4,10 @@ from flask import (
     request,
     redirect,
     url_for,
-    flash
+    flash,
 )
 
+from flask_login import login_required, current_user
 from sqlalchemy import or_
 
 from app.extensions import db
@@ -16,7 +17,7 @@ from app.models import Book, BookTransaction
 books_bp = Blueprint(
     "books",
     __name__,
-    url_prefix="/books"
+    url_prefix="/books",
 )
 
 
@@ -25,14 +26,19 @@ books_bp = Blueprint(
 # =========================================================
 
 @books_bp.route("/")
+@login_required
 def list_books():
 
     search_query = request.args.get(
         "q",
-        ""
+        "",
     ).strip()
 
-    query = Book.query
+    library_id = current_user.library_id
+
+    query = Book.query.filter_by(
+        library_id=library_id
+    )
 
     if search_query:
 
@@ -45,7 +51,7 @@ def list_books():
                 Book.author.ilike(search),
                 Book.publisher.ilike(search),
                 Book.category.ilike(search),
-                Book.isbn.ilike(search)
+                Book.isbn.ilike(search),
             )
         )
 
@@ -56,7 +62,7 @@ def list_books():
     return render_template(
         "books/list.html",
         books=books,
-        search_query=search_query
+        search_query=search_query,
     )
 
 
@@ -66,14 +72,19 @@ def list_books():
 # =========================================================
 
 @books_bp.route("/overview")
+@login_required
 def books_overview():
 
     search_query = request.args.get(
         "q",
-        ""
+        "",
     ).strip()
 
-    query = Book.query
+    library_id = current_user.library_id
+
+    query = Book.query.filter_by(
+        library_id=library_id
+    )
 
     if search_query:
 
@@ -86,7 +97,7 @@ def books_overview():
                 Book.author.ilike(search),
                 Book.publisher.ilike(search),
                 Book.category.ilike(search),
-                Book.isbn.ilike(search)
+                Book.isbn.ilike(search),
             )
         )
 
@@ -97,8 +108,9 @@ def books_overview():
     return render_template(
         "books/overview.html",
         books=books,
-        search_query=search_query
+        search_query=search_query,
     )
+
 
 # =========================================================
 # ADD BOOK
@@ -106,47 +118,47 @@ def books_overview():
 
 @books_bp.route(
     "/add",
-    methods=["GET", "POST"]
+    methods=["GET", "POST"],
 )
+@login_required
 def add_book():
 
     if request.method == "POST":
 
         book_code = request.form.get(
             "book_code",
-            ""
+            "",
         ).strip()
 
         title = request.form.get(
             "title",
-            ""
+            "",
         ).strip()
 
         author = request.form.get(
             "author",
-            ""
+            "",
         ).strip()
 
         publisher = request.form.get(
             "publisher",
-            ""
+            "",
         ).strip()
 
         category = request.form.get(
             "category",
-            ""
+            "",
         ).strip()
 
         isbn = request.form.get(
             "isbn",
-            ""
+            "",
         ).strip()
 
         total_copies = request.form.get(
             "total_copies",
-            "1"
+            "1",
         ).strip()
-
 
         # -------------------------------------------------
         # REQUIRED FIELDS
@@ -156,13 +168,12 @@ def add_book():
 
             flash(
                 "Book code and title are required.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "books/add.html"
             )
-
 
         # -------------------------------------------------
         # TOTAL COPIES VALIDATION
@@ -178,51 +189,51 @@ def add_book():
 
             flash(
                 "Total copies must be a valid number.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "books/add.html"
             )
-
 
         if total_copies < 1:
 
             flash(
                 "Total copies must be at least 1.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "books/add.html"
             )
 
-
         # -------------------------------------------------
         # DUPLICATE BOOK CODE
+        # Only within the current library
         # -------------------------------------------------
 
         existing_book = Book.query.filter_by(
-            book_code=book_code
+            library_id=current_user.library_id,
+            book_code=book_code,
         ).first()
 
         if existing_book:
 
             flash(
                 "A book with this code already exists.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "books/add.html"
             )
 
-
         # -------------------------------------------------
         # CREATE BOOK
         # -------------------------------------------------
 
         book = Book(
+            library_id=current_user.library_id,
             book_code=book_code,
             title=title,
             author=author or None,
@@ -230,22 +241,20 @@ def add_book():
             category=category or None,
             isbn=isbn or None,
             total_copies=total_copies,
-            available_copies=total_copies
+            available_copies=total_copies,
         )
 
         db.session.add(book)
         db.session.commit()
 
-
         flash(
             "Book added successfully.",
-            "success"
+            "success",
         )
 
         return redirect(
             url_for("books.list_books")
         )
-
 
     return render_template(
         "books/add.html"
@@ -258,51 +267,56 @@ def add_book():
 
 @books_bp.route(
     "/<int:book_id>/edit",
-    methods=["GET", "POST"]
+    methods=["GET", "POST"],
 )
+@login_required
 def edit_book(book_id):
 
-    book = Book.query.get_or_404(
-        book_id
-    )
+    # IMPORTANT:
+    # Only retrieve a book belonging to the
+    # currently logged-in user's library.
+
+    book = Book.query.filter_by(
+        id=book_id,
+        library_id=current_user.library_id,
+    ).first_or_404()
 
     if request.method == "POST":
 
         book_code = request.form.get(
             "book_code",
-            ""
+            "",
         ).strip()
 
         title = request.form.get(
             "title",
-            ""
+            "",
         ).strip()
 
         author = request.form.get(
             "author",
-            ""
+            "",
         ).strip()
 
         publisher = request.form.get(
             "publisher",
-            ""
+            "",
         ).strip()
 
         category = request.form.get(
             "category",
-            ""
+            "",
         ).strip()
 
         isbn = request.form.get(
             "isbn",
-            ""
+            "",
         ).strip()
 
         total_copies = request.form.get(
             "total_copies",
-            "1"
+            "1",
         ).strip()
-
 
         # -------------------------------------------------
         # REQUIRED FIELDS
@@ -312,14 +326,13 @@ def edit_book(book_id):
 
             flash(
                 "Book code and title are required.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "books/edit.html",
-                book=book
+                book=book,
             )
-
 
         # -------------------------------------------------
         # TOTAL COPIES VALIDATION
@@ -335,49 +348,48 @@ def edit_book(book_id):
 
             flash(
                 "Total copies must be a valid number.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "books/edit.html",
-                book=book
+                book=book,
             )
-
 
         if total_copies < 1:
 
             flash(
                 "Total copies must be at least 1.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "books/edit.html",
-                book=book
+                book=book,
             )
-
 
         # -------------------------------------------------
         # DUPLICATE BOOK CODE
+        # Only within the current library
         # -------------------------------------------------
 
         existing_book = Book.query.filter(
+            Book.library_id == current_user.library_id,
             Book.book_code == book_code,
-            Book.id != book.id
+            Book.id != book.id,
         ).first()
 
         if existing_book:
 
             flash(
                 "Another book with this code already exists.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "books/edit.html",
-                book=book
+                book=book,
             )
-
 
         # -------------------------------------------------
         # CURRENTLY ISSUED COPIES
@@ -388,7 +400,6 @@ def edit_book(book_id):
             book.available_copies
         )
 
-
         # -------------------------------------------------
         # CANNOT REDUCE BELOW ISSUED COPIES
         # -------------------------------------------------
@@ -398,14 +409,13 @@ def edit_book(book_id):
             flash(
                 f"Total copies cannot be less than the "
                 f"{issued_copies} currently issued copy/copies.",
-                "danger"
+                "danger",
             )
 
             return render_template(
                 "books/edit.html",
-                book=book
+                book=book,
             )
-
 
         # -------------------------------------------------
         # UPDATE BOOK
@@ -425,23 +435,20 @@ def edit_book(book_id):
             issued_copies
         )
 
-
         db.session.commit()
-
 
         flash(
             "Book updated successfully.",
-            "success"
+            "success",
         )
 
         return redirect(
             url_for("books.list_books")
         )
 
-
     return render_template(
         "books/edit.html",
-        book=book
+        book=book,
     )
 
 
@@ -451,21 +458,27 @@ def edit_book(book_id):
 
 @books_bp.route(
     "/<int:book_id>/delete",
-    methods=["POST"]
+    methods=["POST"],
 )
+@login_required
 def delete_book(book_id):
 
-    book = Book.query.get_or_404(
-        book_id
-    )
+    # IMPORTANT:
+    # Prevent users from deleting books belonging
+    # to another library.
 
+    book = Book.query.filter_by(
+        id=book_id,
+        library_id=current_user.library_id,
+    ).first_or_404()
 
     # -------------------------------------------------
     # BLOCK DELETE IF BOOK IS CURRENTLY ISSUED
     # -------------------------------------------------
 
     active_transaction = BookTransaction.query.filter_by(
-        book_id=book.id
+        book_id=book.id,
+        library_id=current_user.library_id,
     ).first()
 
     if active_transaction:
@@ -473,13 +486,12 @@ def delete_book(book_id):
         flash(
             f"Cannot delete '{book.title}' because it is "
             f"currently issued and has not been returned.",
-            "danger"
+            "danger",
         )
 
         return redirect(
             url_for("books.list_books")
         )
-
 
     # -------------------------------------------------
     # DELETE BOOK
@@ -488,10 +500,9 @@ def delete_book(book_id):
     db.session.delete(book)
     db.session.commit()
 
-
     flash(
         "Book deleted successfully.",
-        "success"
+        "success",
     )
 
     return redirect(
@@ -505,15 +516,17 @@ def delete_book(book_id):
 # =========================================================
 
 @books_bp.route("/available")
+@login_required
 def available_books():
 
     search_query = request.args.get(
         "q",
-        ""
+        "",
     ).strip()
 
     query = Book.query.filter(
-        Book.available_copies > 0
+        Book.library_id == current_user.library_id,
+        Book.available_copies > 0,
     )
 
     if search_query:
@@ -527,7 +540,7 @@ def available_books():
                 Book.author.ilike(search),
                 Book.publisher.ilike(search),
                 Book.category.ilike(search),
-                Book.isbn.ilike(search)
+                Book.isbn.ilike(search),
             )
         )
 
@@ -538,5 +551,5 @@ def available_books():
     return render_template(
         "books/available.html",
         books=books,
-        search_query=search_query
+        search_query=search_query,
     )

@@ -13,13 +13,8 @@
     <div class="page-header">
 
         <div>
-
-            <h1>
-                Return Book
-            </h1>
-
+            <h1>Return Book</h1>
         </div>
-
 
         <a
             href="{{ url_for('main.index') }}"
@@ -30,6 +25,7 @@
         </a>
 
     </div>
+
 
     {% if transactions %}
 
@@ -49,6 +45,10 @@
 
                 <div>
                     <h2>Book Return</h2>
+
+                    <p>
+                        Select an active loan to complete the return.
+                    </p>
                 </div>
 
             </div>
@@ -68,14 +68,19 @@
                     <div class="issue-section-heading">
 
                         <div class="issue-section-number">
-                            
+                            01
                         </div>
 
                         <div>
                             <h3>Select Issued Book <span>*</span></h3>
+
+                            <p>
+                                Search for the book or employee associated with the loan.
+                            </p>
                         </div>
 
                     </div>
+
 
                     <div class="issue-input-wrapper">
 
@@ -87,8 +92,7 @@
                             data-search-placeholder="Search book, employee, or code..."
                         >
 
-                            <option value="">
-                            </option>
+                            <option value=""></option>
 
                             {% for transaction in transactions %}
 
@@ -113,6 +117,7 @@
 
                 </div>
 
+
                 <!-- =================================================
                      ACTIONS
                 ================================================== -->
@@ -125,7 +130,6 @@
                     >
                         Cancel
                     </a>
-
 
                     <button
                         type="submit"
@@ -243,7 +247,8 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    const transactionSelect = document.getElementById("transaction_id");
+    const transactionSelect =
+        document.getElementById("transaction_id");
 
     if (!transactionSelect) {
         return;
