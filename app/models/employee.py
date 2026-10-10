@@ -6,14 +6,28 @@ from app.extensions import db
 class Employee(db.Model):
     __tablename__ = "employees"
 
+    __table_args__ = (
+        db.UniqueConstraint(
+            "library_id",
+            "employee_code",
+            name="uq_employees_library_employee_code"
+        ),
+    )
+
     id = db.Column(
         db.Integer,
         primary_key=True
     )
 
+    library_id = db.Column(
+        db.Integer,
+        db.ForeignKey("libraries.id"),
+        nullable=False,
+        index=True
+    )
+
     employee_code = db.Column(
         db.String(50),
-        unique=True,
         nullable=False
     )
 
@@ -59,6 +73,25 @@ class Employee(db.Model):
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc)
+    )
+
+    # -----------------------------------------------------
+    # LIBRARY RELATIONSHIP
+    # -----------------------------------------------------
+
+    library = db.relationship(
+        "Library",
+        back_populates="employees"
+    )
+
+    # -----------------------------------------------------
+    # ACTIVE BOOK TRANSACTIONS
+    # -----------------------------------------------------
+
+    transactions = db.relationship(
+        "BookTransaction",
+        back_populates="employee",
+        lazy=True
     )
 
     def __repr__(self):

@@ -3,15 +3,31 @@ from datetime import datetime, timezone
 from app.extensions import db
 
 
-
 class Book(db.Model):
     __tablename__ = "books"
 
-    id = db.Column(db.Integer, primary_key=True)
+    __table_args__ = (
+        db.UniqueConstraint(
+            "library_id",
+            "book_code",
+            name="uq_books_library_book_code"
+        ),
+    )
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    library_id = db.Column(
+        db.Integer,
+        db.ForeignKey("libraries.id"),
+        nullable=False,
+        index=True
+    )
 
     book_code = db.Column(
         db.String(50),
-        unique=True,
         nullable=False
     )
 
@@ -63,6 +79,25 @@ class Book(db.Model):
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc)
+    )
+
+    # -----------------------------------------------------
+    # LIBRARY RELATIONSHIP
+    # -----------------------------------------------------
+
+    library = db.relationship(
+        "Library",
+        back_populates="books"
+    )
+
+    # -----------------------------------------------------
+    # ACTIVE BOOK TRANSACTIONS
+    # -----------------------------------------------------
+
+    transactions = db.relationship(
+        "BookTransaction",
+        back_populates="book",
+        lazy=True
     )
 
     def __repr__(self):

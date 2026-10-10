@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+
+{% block title %}Library Management System{% endblock %}
+
+{% block content %}
+
+<div class="landing-container">
+
+    <div class="landing-content">
+
+        <h1>Library Management System</h1>
+
+        <p>
+            Manage books, employees, issues, returns, and transactions
+            from one simple platform.
+        </p>
+
+        <div class="landing-actions">
+
+            <button
+                type="button"
+                onclick="openLoginModal()"
+                class="login-button"
+            >
+                Login
+            </button>
+
+            <button
+                type="button"
+                onclick="openRegisterModal()"
+                class="register-button"
+            >
+                Create Library
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     LOGIN MODAL
+====================================================== -->
+
+<div
+    id="loginModal"
+    class="login-modal"
+    style="display: none;"
+>
+
+    <div class="login-card">
+
+        <button
+            type="button"
+            class="login-close"
+            onclick="closeLoginModal()"
+        >
+            &times;
+        </button>
+
+        <h2>Welcome Back</h2>
+
+        <p>
+            Login to access your library dashboard.
+        </p>
+
+        <form
+            method="POST"
+            action="{{ url_for('auth.login') }}"
+        >
+
+            <div class="form-group">
+
+                <label for="loginUsername">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="loginUsername"
+                    name="username"
+                    placeholder="Enter your username"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="loginPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="login-submit"
+            >
+                Login
+            </button>
+
+        </form>
+
+        <div class="modal-switch">
+
+            <span>Don't have a library?</span>
+
+            <button
+                type="button"
+                onclick="switchToRegister()"
+            >
+                Create one
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     REGISTER MODAL
+====================================================== -->
+
+<div
+    id="registerModal"
+    class="login-modal"
+    style="display: none;"
+>
+
+    <div class="login-card register-card">
+
+        <button
+            type="button"
+            class="login-close"
+            onclick="closeRegisterModal()"
+        >
+            &times;
+        </button>
+
+        <h2>Create Your Library</h2>
+
+        <p>
+            Create your library and administrator account.
+        </p>
+
+        <form
+            method="POST"
+            action="{{ url_for('auth.register') }}"
+        >
+
+            <!-- Library Name -->
+
+            <div class="form-group">
+
+                <label for="libraryName">
+                    Library Name
+                </label>
+
+                <input
+                    type="text"
+                    id="libraryName"
+                    name="library_name"
+                    placeholder="Enter your library name"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Admin Username -->
+
+            <div class="form-group">
+
+                <label for="registerUsername">
+                    Admin Username
+                </label>
+
+                <input
+                    type="text"
+                    id="registerUsername"
+                    name="username"
+                    placeholder="Choose a username"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Admin Email -->
+
+            <div class="form-group">
+
+                <label for="registerEmail">
+                    Admin Email
+                </label>
+
+                <input
+                    type="email"
+                    id="registerEmail"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Password -->
+
+            <div class="form-group">
+
+                <label for="registerPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="registerPassword"
+                    name="password"
+                    placeholder="Minimum 8 characters"
+                    minlength="8"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Submit -->
+
+            <button
+                type="submit"
+                class="login-submit"
+            >
+                Create Library
+            </button>
+
+        </form>
+
+        <div class="modal-switch">
+
+            <span>Already have an account?</span>
+
+            <button
+                type="button"
+                onclick="switchToLogin()"
+            >
+                Login
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
+
+<script>
+
+function openLoginModal() {
+
+    document.getElementById("loginModal").style.display = "flex";
+
+}
+
+
+function closeLoginModal() {
+
+    document.getElementById("loginModal").style.display = "none";
+
+}
+
+
+function openRegisterModal() {
+
+    document.getElementById("registerModal").style.display = "flex";
+
+}
+
+
+function closeRegisterModal() {
+
+    document.getElementById("registerModal").style.display = "none";
+
+}
+
+
+function switchToRegister() {
+
+    closeLoginModal();
+
+    openRegisterModal();
+
+}
+
+
+function switchToLogin() {
+
+    closeRegisterModal();
+
+    openLoginModal();
+
+}
+
+
+/* Close when clicking outside the card */
+
+window.addEventListener("click", function(event) {
+
+    const loginModal =
+        document.getElementById("loginModal");
+
+    const registerModal =
+        document.getElementById("registerModal");
+
+
+    if (event.target === loginModal) {
+
+        closeLoginModal();
+
+    }
+
+
+    if (event.target === registerModal) {
+
+        closeRegisterModal();
+
+    }
+
+});
+
+
+/* Close with Escape */
+
+window.addEventListener("keydown", function(event) {
+
+    if (event.key === "Escape") {
+
+        closeLoginModal();
+
+        closeRegisterModal();
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

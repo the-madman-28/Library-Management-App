@@ -11,6 +11,13 @@ class BookTransaction(db.Model):
         primary_key=True
     )
 
+    library_id = db.Column(
+        db.Integer,
+        db.ForeignKey("libraries.id"),
+        nullable=False,
+        index=True
+    )
+
     history_id = db.Column(
         db.Integer,
         db.ForeignKey("transaction_history.id"),
@@ -21,13 +28,15 @@ class BookTransaction(db.Model):
     book_id = db.Column(
         db.Integer,
         db.ForeignKey("books.id"),
-        nullable=False
+        nullable=False,
+        index=True
     )
 
     employee_id = db.Column(
         db.Integer,
         db.ForeignKey("employees.id"),
-        nullable=False
+        nullable=False,
+        index=True
     )
 
     issue_date = db.Column(
@@ -51,28 +60,40 @@ class BookTransaction(db.Model):
         default=lambda: datetime.now(timezone.utc)
     )
 
+    # -----------------------------------------------------
+    # TRANSACTION HISTORY RELATIONSHIP
+    # -----------------------------------------------------
+
     history = db.relationship(
         "TransactionHistory",
-        backref=db.backref(
-            "active_transaction",
-            uselist=False
-        )
+        back_populates="active_transaction"
     )
+
+    # -----------------------------------------------------
+    # BOOK RELATIONSHIP
+    # -----------------------------------------------------
 
     book = db.relationship(
         "Book",
-        backref=db.backref(
-            "transactions",
-            lazy=True
-        )
+        back_populates="transactions"
     )
+
+    # -----------------------------------------------------
+    # EMPLOYEE RELATIONSHIP
+    # -----------------------------------------------------
 
     employee = db.relationship(
         "Employee",
-        backref=db.backref(
-            "transactions",
-            lazy=True
-        )
+        back_populates="transactions"
+    )
+
+    # -----------------------------------------------------
+    # LIBRARY RELATIONSHIP
+    # -----------------------------------------------------
+
+    library = db.relationship(
+        "Library",
+        back_populates="book_transactions"
     )
 
     def __repr__(self):

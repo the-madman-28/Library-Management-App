@@ -17,7 +17,7 @@
 
     <div class="books-header-actions">
         <a
-            href="{{ url_for('main.index') }}"
+            href="{{ url_for('main.dashboard') }}"
             class="btn btn-light"
         >
             <i class="bi bi-arrow-left"></i>
@@ -376,14 +376,6 @@
                     Your library collection is currently empty.
                     Add a book to start managing your collection.
                 </span>
-
-                <a
-                    href="{{ url_for('books.add_book') }}"
-                    class="btn btn-primary"
-                >
-                    <i class="bi bi-plus-circle"></i>
-                    Add Book
-                </a>
 
             </div>
 

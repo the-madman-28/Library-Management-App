@@ -24,35 +24,36 @@
         rel="stylesheet"
     >
 
+
     <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/issue.css') }}"
->
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/issue.css') }}"
+    >
 
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/return.css') }}"
->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/return.css') }}"
+    >
 
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/books.css') }}"
->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/books.css') }}"
+    >
 
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/book-form.css') }}"
->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/book-form.css') }}"
+    >
 
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/employees.css') }}"
->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/employees.css') }}"
+    >
 
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/employee-form.css') }}"
->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/employee-form.css') }}"
+    >
 
 
     <!-- =====================================================
@@ -105,10 +106,9 @@
 
 
             <!-- Brand -->
-
             <a
                 class="navbar-brand"
-                href="{{ url_for('main.index') }}"
+                href="{% if current_user.is_authenticated %}{{ url_for('main.dashboard') }}{% else %}{{ url_for('main.index') }}{% endif %}"
             >
 
                 <span class="brand-icon">
@@ -120,110 +120,151 @@
             </a>
 
 
-            <!-- Mobile Toggle -->
-
-            <button
-                class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#mainNavbar"
-                aria-controls="mainNavbar"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
-
-                <span class="navbar-toggler-icon"></span>
-
-            </button>
+            {% if current_user.is_authenticated %}
 
 
-            <!-- Navigation -->
+                <!-- Mobile Toggle -->
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
 
-            <div
-                class="collapse navbar-collapse"
-                id="mainNavbar"
-            >
+                    <span class="navbar-toggler-icon"></span>
 
-                <ul class="navbar-nav ms-auto">
-
-
-                    <!-- Overview -->
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link"
-                            href="{{ url_for('main.index') }}"
-                        >
-                            <i class="bi bi-grid"></i>
-                            Overview
-                        </a>
-
-                    </li>
+                </button>
 
 
-                    <!-- Books -->
+                <!-- Navigation -->
+                <div
+                    class="collapse navbar-collapse"
+                    id="mainNavbar"
+                >
 
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link"
-                            href="{{ url_for('books.list_books') }}"
-                        >
-                            <i class="bi bi-book"></i>
-                            Books
-                        </a>
-
-                    </li>
+                    <ul class="navbar-nav ms-auto">
 
 
-                    <!-- Employees -->
+                        <!-- Overview -->
+                        <li class="nav-item">
 
-                    <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="{{ url_for('main.dashboard') }}"
+                            >
 
-                        <a
-                            class="nav-link"
-                            href="{{ url_for('employees.list_employees') }}"
-                        >
-                            <i class="bi bi-people"></i>
-                            Employees
-                        </a>
+                                <i class="bi bi-grid"></i>
 
-                    </li>
+                                Overview
 
+                            </a>
 
-                    <!-- Issue -->
-
-                    <li class="nav-item">
-
-                        <a
-                            class="nav-link"
-                            href="{{ url_for('transactions.issue_book') }}"
-                        >
-                            <i class="bi bi-box-arrow-right"></i>
-                            Issue
-                        </a>
-
-                    </li>
+                        </li>
 
 
-                    <!-- Return -->
+                        <!-- Books -->
+                        <li class="nav-item">
 
-                    <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="{{ url_for('books.list_books') }}"
+                            >
 
-                        <a
-                            class="nav-link"
-                            href="{{ url_for('transactions.return_book') }}"
-                        >
-                            <i class="bi bi-arrow-return-left"></i>
-                            Return
-                        </a>
+                                <i class="bi bi-book"></i>
 
-                    </li>
+                                Books
 
-                </ul>
+                            </a>
 
-            </div>
+                        </li>
+
+
+                        <!-- Employees -->
+                        <li class="nav-item">
+
+                            <a
+                                class="nav-link"
+                                href="{{ url_for('employees.list_employees') }}"
+                            >
+
+                                <i class="bi bi-people"></i>
+
+                                Employees
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- Issue -->
+                        <li class="nav-item">
+
+                            <a
+                                class="nav-link"
+                                href="{{ url_for('transactions.issue_book') }}"
+                            >
+
+                                <i class="bi bi-box-arrow-right"></i>
+
+                                Issue
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- Return -->
+                        <li class="nav-item">
+
+                            <a
+                                class="nav-link"
+                                href="{{ url_for('transactions.return_book') }}"
+                            >
+
+                                <i class="bi bi-arrow-return-left"></i>
+
+                                Return
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- Logout -->
+                        <li class="nav-item">
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('auth.logout') }}"
+                                class="logout-form"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="nav-link logout-btn"
+                                >
+
+                                    <i class="bi bi-box-arrow-right"></i>
+
+                                    Logout
+
+                                </button>
+
+                            </form>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+
+            {% endif %}
+
 
         </div>
 
@@ -252,8 +293,8 @@
                         aria-modal="true"
                     >
 
-                        <!-- Animated Icon -->
 
+                        <!-- Animated Icon -->
                         <div class="notification-icon">
 
                             {% if category == "success" %}
@@ -276,6 +317,7 @@
 
                                 </div>
 
+
                             {% elif category == "danger" or category == "error" %}
 
                                 <div class="notification-icon-circle error-circle">
@@ -284,6 +326,7 @@
 
                                 </div>
 
+
                             {% elif category == "warning" %}
 
                                 <div class="notification-icon-circle warning-circle">
@@ -291,6 +334,7 @@
                                     <i class="bi bi-exclamation-lg"></i>
 
                                 </div>
+
 
                             {% else %}
 
@@ -306,7 +350,6 @@
 
 
                         <!-- Message -->
-
                         <div class="notification-content">
 
                             {% if category == "success" %}
@@ -315,17 +358,20 @@
                                     Success
                                 </h2>
 
+
                             {% elif category == "danger" or category == "error" %}
 
                                 <h2>
                                     Action Failed
                                 </h2>
 
+
                             {% elif category == "warning" %}
 
                                 <h2>
                                     Attention Required
                                 </h2>
+
 
                             {% else %}
 
@@ -344,7 +390,6 @@
 
 
                         <!-- Close -->
-
                         <button
                             type="button"
                             class="notification-button"
@@ -352,6 +397,7 @@
                         >
                             OK
                         </button>
+
 
                     </div>
 
@@ -413,6 +459,7 @@
     <script
         src="{{ url_for('static', filename='js/notifications.js') }}"
     ></script>
+
 
 </body>
 
