@@ -38,7 +38,7 @@
                         Search results for
                         <strong>"{{ search_query }}"</strong>
                     {% else %}
-                        {{ history|length }} transaction(s)
+                        {{ pagination.total }} transaction(s)
                     {% endif %}
                 </p>
             </div>
@@ -219,6 +219,105 @@
         </div>
 
 
+<!-- Pagination of tansactions books -->
+{% if pagination and pagination.pages > 1 %}
+
+    <div class="books-pagination">
+
+        <div class="pagination-summary">
+            Showing
+            <strong>
+                {{ (pagination.page - 1) * pagination.per_page + 1 }}
+            </strong>
+            –
+            <strong>
+                {{ [pagination.page * pagination.per_page, pagination.total] | min }}
+            </strong>
+            of
+            <strong>{{ pagination.total }}</strong>
+            transactions
+        </div>
+
+        <nav class="pagination-controls" aria-label="Books pagination">
+
+            <!-- Previous -->
+            {% if pagination.has_prev %}
+                <a
+                    class="pagination-btn"
+                    href="{{ url_for(
+                        'transactions.transaction_history',
+                        page=pagination.prev_num,
+                        q=search_query or None
+                    ) }}"
+                >
+                    <i class="bi bi-chevron-left"></i>
+                    Previous
+                </a>
+            {% else %}
+                <span class="pagination-btn disabled">
+                    <i class="bi bi-chevron-left"></i>
+                    Previous
+                </span>
+            {% endif %}
+
+            <!-- Page numbers -->
+            {% for page_num in pagination.iter_pages(
+                left_edge=1,
+                right_edge=1,
+                left_current=1,
+                right_current=2
+            ) %}
+
+                {% if page_num %}
+
+                    {% if page_num == pagination.page %}
+                        <span class="pagination-number active" aria-current="page">
+                            {{ page_num }}
+                        </span>
+                    {% else %}
+                        <a
+                            class="pagination-number"
+                            href="{{ url_for(
+                                'transactions.transaction_history',
+                                page=page_num,
+                                q=search_query or None
+                            ) }}"
+                            aria-label="Go to page {{ page_num }}"
+                        >
+                            {{ page_num }}
+                        </a>
+                    {% endif %}
+
+                {% else %}
+                    <span class="pagination-ellipsis">&hellip;</span>
+                {% endif %}
+
+            {% endfor %}
+
+            <!-- Next -->
+            {% if pagination.has_next %}
+                <a
+                    class="pagination-btn"
+                    href="{{ url_for(
+                        'transactions.transaction_history',
+                        page=pagination.next_num,
+                        q=search_query or None
+                    ) }}"
+                >
+                    Next
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            {% else %}
+                <span class="pagination-btn disabled">
+                    Next
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            {% endif %}
+
+        </nav>
+
+</div>
+{% endif %}
         {% else %}
 
         <!-- Empty / Search Result State -->

@@ -471,10 +471,7 @@ def issued_books():
 
     library_id = current_user.library_id
 
-    search_query = request.args.get(
-        "q",
-        ""
-    ).strip()
+    search_query = request.args.get("q", "").strip()
 
     query = BookTransaction.query.filter(
         BookTransaction.library_id == library_id
@@ -485,7 +482,6 @@ def issued_books():
     # -----------------------------------------------------
 
     if search_query:
-
         search = f"%{search_query}%"
 
         query = query.join(
@@ -501,17 +497,28 @@ def issued_books():
             )
         )
 
-    transactions = query.order_by(
+    # -----------------------------------------------------
+    # PAGINATION
+    # -----------------------------------------------------
+
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+
+    pagination = query.order_by(
         BookTransaction.due_date.asc()
-    ).all()
+    ).paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False
+    )
 
     return render_template(
         "transactions/issued.html",
-        transactions=transactions,
+        transactions=pagination.items,
+        pagination=pagination,
         today=date.today(),
         search_query=search_query
     )
-
 
 # =========================================================
 # OVERDUE BOOKS
@@ -523,10 +530,7 @@ def overdue_books():
 
     library_id = current_user.library_id
 
-    search_query = request.args.get(
-        "q",
-        ""
-    ).strip()
+    search_query = request.args.get("q", "").strip()
 
     query = BookTransaction.query.filter(
         BookTransaction.library_id == library_id,
@@ -538,7 +542,6 @@ def overdue_books():
     # -----------------------------------------------------
 
     if search_query:
-
         search = f"%{search_query}%"
 
         query = query.join(
@@ -554,17 +557,28 @@ def overdue_books():
             )
         )
 
-    transactions = query.order_by(
+    # -----------------------------------------------------
+    # PAGINATION
+    # -----------------------------------------------------
+
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+
+    pagination = query.order_by(
         BookTransaction.due_date.asc()
-    ).all()
+    ).paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False
+    )
 
     return render_template(
         "transactions/overdue.html",
-        transactions=transactions,
+        transactions=pagination.items,
+        pagination=pagination,
         today=date.today(),
         search_query=search_query
     )
-
 
 # =========================================================
 # ALL-TIME TRANSACTION HISTORY
@@ -604,12 +618,24 @@ def transaction_history():
             )
         )
 
-    history = query.order_by(
+    # -----------------------------------------------------
+    # PAGINATION
+    # -----------------------------------------------------
+
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+
+    pagination = query.order_by(
         TransactionHistory.created_at.desc()
-    ).all()
+    ).paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False
+    )
 
     return render_template(
         "transactions/history.html",
-        history=history,
+        history=pagination.items,
+        pagination=pagination,
         search_query=search_query
     )
