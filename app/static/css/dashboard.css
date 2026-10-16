@@ -704,3 +704,187 @@ a.stat-card {
     }
 
 }
+
+
+/* ==========================================
+   DASHBOARD WELCOME - COMPACT & ANIMATED
+========================================== */
+
+.dashboard-welcome {
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    animation: welcomeEnter 0.6s ease-out both;
+}
+
+/* Main welcome heading */
+
+.welcome-title {
+    margin: 0;
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    font-weight: 750;
+    line-height: 1.3;
+    letter-spacing: -0.5px;
+}
+
+/* Animated library name */
+
+.library-name {
+    display: inline;
+    background: linear-gradient(
+        90deg,
+        #0ea5e9,
+        #6366f1,
+        #8b5cf6,
+        #0ea5e9
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: nameShimmer 1s linear infinite;
+}
+
+/* Message container: fixed height prevents extra spacing */
+
+.welcome-subtitle {
+    position: relative;
+    width: 100%;
+    max-width: 540px;
+    height: 26px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+/* Each message occupies the same position */
+
+.welcome-message {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 26px;
+
+    opacity: 0;
+    transform: translateX(100%);
+    animation: tickerSlide 16s ease-in-out infinite;
+}
+
+/* Each message starts four seconds after the previous one */
+
+.welcome-message:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.welcome-message:nth-child(2) {
+    animation-delay: 4s;
+}
+
+.welcome-message:nth-child(3) {
+    animation-delay: 8s;
+}
+
+.welcome-message:nth-child(4) {
+    animation-delay: 12s;
+}
+
+/* Heading entrance */
+
+@keyframes welcomeEnter {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Gradient animation */
+
+@keyframes nameShimmer {
+    from {
+        background-position: 0% center;
+    }
+
+    to {
+        background-position: 200% center;
+    }
+}
+
+/* Messages slide in, stay visible, then slide out */
+
+@keyframes tickerSlide {
+    0% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+
+    5% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    25% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+
+    25.01%,
+    100% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* Responsive layout */
+
+@media (max-width: 768px) {
+    .welcome-title {
+        font-size: 1.5rem;
+    }
+
+    .welcome-subtitle {
+        max-width: 100%;
+    }
+
+    .welcome-message {
+        font-size: 0.8rem;
+    }
+}
+
+/* Accessibility: respect reduced-motion preferences */
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-welcome,
+    .library-name,
+    .welcome-message {
+        animation: none;
+    }
+
+    .welcome-message {
+        display: none;
+    }
+
+    .welcome-message:first-child {
+        display: block;
+        position: relative;
+        opacity: 1;
+        transform: none;
+    }
+}

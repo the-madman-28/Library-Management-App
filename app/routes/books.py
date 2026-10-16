@@ -23,27 +23,17 @@ books_bp = Blueprint(
 
 # =========================================================
 # BOOK LIST
-# =========================================================
 
 @books_bp.route("/")
 @login_required
 def list_books():
-
-    search_query = request.args.get(
-        "q",
-        "",
-    ).strip()
-
+    search_query = request.args.get("q", "").strip()
     library_id = current_user.library_id
 
-    query = Book.query.filter_by(
-        library_id=library_id
-    )
+    query = Book.query.filter_by(library_id=library_id)
 
     if search_query:
-
         search = f"%{search_query}%"
-
         query = query.filter(
             or_(
                 Book.book_code.ilike(search),
@@ -55,15 +45,28 @@ def list_books():
             )
         )
 
-    books = query.order_by(
+    # Pagination settings
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+
+    pagination = query.order_by(
         Book.title.asc()
-    ).all()
+    ).paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False,
+    )
+
+    # Only current page books
+    books = pagination.items
 
     return render_template(
         "books/list.html",
         books=books,
+        pagination=pagination,
         search_query=search_query,
     )
+
 
 
 # =========================================================
@@ -101,13 +104,22 @@ def books_overview():
             )
         )
 
-    books = query.order_by(
+
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+
+    pagination = query.order_by(
         Book.title.asc()
-    ).all()
+    ).paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False,
+    )
 
     return render_template(
         "books/overview.html",
-        books=books,
+        books=pagination.items,
+        pagination=pagination,
         search_query=search_query,
     )
 
@@ -510,7 +522,6 @@ def delete_book(book_id):
     )
 
 
-# =========================================================
 # AVAILABLE BOOKS
 # Read-only page used by dashboard
 # =========================================================
@@ -519,10 +530,7 @@ def delete_book(book_id):
 @login_required
 def available_books():
 
-    search_query = request.args.get(
-        "q",
-        "",
-    ).strip()
+    search_query = request.args.get("q", "").strip()
 
     query = Book.query.filter(
         Book.library_id == current_user.library_id,
@@ -530,7 +538,6 @@ def available_books():
     )
 
     if search_query:
-
         search = f"%{search_query}%"
 
         query = query.filter(
@@ -544,12 +551,20 @@ def available_books():
             )
         )
 
-    books = query.order_by(
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+
+    pagination = query.order_by(
         Book.title.asc()
-    ).all()
+    ).paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False,
+    )
 
     return render_template(
         "books/available.html",
-        books=books,
+        books=pagination.items,
+        pagination=pagination,
         search_query=search_query,
     )

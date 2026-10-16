@@ -25,22 +25,19 @@ employees_bp = Blueprint(
 # EMPLOYEE LIST
 # ============================================================
 
+
 @employees_bp.route("/")
 @login_required
 def list_employees():
 
-    search_query = request.args.get(
-        "q",
-        "",
-    ).strip()
+    search_query = request.args.get("q", "").strip()
 
     query = Employee.query.filter_by(
         library_id=current_user.library_id
     )
 
-    # Database-side search
+    # Search employees
     if search_query:
-
         search = f"%{search_query}%"
 
         query = query.filter(
@@ -54,38 +51,46 @@ def list_employees():
             )
         )
 
-    employees = query.order_by(
+    # Pagination settings - outside the search condition
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+
+    pagination = query.order_by(
         Employee.name.asc()
-    ).all()
+    ).paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False,
+    )
+
+    # Employees for the current page only
+    employees = pagination.items
 
     return render_template(
         "employees/list.html",
         employees=employees,
+        pagination=pagination,
         search_query=search_query,
     )
-
 
 # ============================================================
 # EMPLOYEE OVERVIEW
 # Read-only page used by dashboard
 # ============================================================
 
+
 @employees_bp.route("/overview")
 @login_required
 def employees_overview():
 
-    search_query = request.args.get(
-        "q",
-        "",
-    ).strip()
+    search_query = request.args.get("q", "").strip()
 
     query = Employee.query.filter_by(
         library_id=current_user.library_id
     )
 
-    # Database-side search
+    # Search employees only when a search term is provided
     if search_query:
-
         search = f"%{search_query}%"
 
         query = query.filter(
@@ -99,15 +104,28 @@ def employees_overview():
             )
         )
 
-    employees = query.order_by(
+    # Pagination must be outside the search condition
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+
+    pagination = query.order_by(
         Employee.name.asc()
-    ).all()
+    ).paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False,
+    )
+
+    # Employees for the current page
+    employees = pagination.items
 
     return render_template(
         "employees/overview.html",
         employees=employees,
+        pagination=pagination,
         search_query=search_query,
     )
+
 
 
 # ============================================================

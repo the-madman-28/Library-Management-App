@@ -12,9 +12,35 @@
 
     <div class="page-header">
 
-        <div>
-            <h1>Overview</h1>
+        
+        <div class="dashboard-welcome">
+            <h1 class="welcome-title">
+                Welcome to
+                <span class="library-name">
+                    {% if current_user.is_authenticated and current_user.library %}
+                        {{ current_user.library.name }}
+                    {% else %}
+                        Library
+                    {% endif %}
+                </span>
+            </h1>
+
+            <div class="welcome-subtitle">
+                <span class="welcome-message">
+                    Your library, beautifully organized.
+                </span>
+                <span class="welcome-message">
+                    Keep books and records in one place.
+                </span>
+                <span class="welcome-message">
+                    Every book has a story to share.
+                </span>
+                <span class="welcome-message">
+                    Making library management simpler.
+                </span>
+            </div>
         </div>
+
 
         <div class="current-date">
             {{ today }}
@@ -215,9 +241,9 @@
                     <small>Complete transaction history</small>
                 </div>
 
-                <div class="transaction-count">
-                    {{ all_time_transactions }}
-                </div>
+                <!-- <div class="transaction-count"> -->
+                    <!-- {{ all_time_transactions }}
+                </div> -->
 
                 <i class="bi bi-chevron-right action-arrow"></i>
             </a>
