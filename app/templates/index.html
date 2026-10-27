@@ -1,365 +1,342 @@
+
 {% extends "base.html" %}
 
 {% block title %}Library Management System{% endblock %}
 
 {% block content %}
+<main class="landing-page">
+    <div class="landing-glow landing-glow-one"></div>
+    <div class="landing-glow landing-glow-two"></div>
 
-<div class="landing-container">
+    <header class="landing-header">
+        <!-- <a href="{{ url_for('main.index') }}" class="brand">
+            <span class="brand-icon">L</span>
+            <span>Libra<span class="brand-highlight">Flow</span></span>
+        </a> -->
+        <!-- <div class="book-page-flip" aria-hidden="true"></div> -->
+        
+        <div class="header-label">
+            <span class="status-dot"></span>
+            Smart Library Management
+        </div>
+    </header>
 
-    <div class="landing-content">
+    <section class="landing-hero">
+        <div class="hero-copy">
+            <div class="eyebrow">
+                <span class="eyebrow-line"></span>
+                YOUR LIBRARY, REIMAGINED
+            </div>
 
-        <h1>Library Management System</h1>
+            <h1>
+                Every book has
+                <span class="title-gradient">a place.</span>
+                <br>
+                Every reader has
+                <span class="title-accent">a story.</span>
+            </h1>
 
-        <p>
-            Manage books, employees, issues, returns, and transactions
-            from one simple platform.
-        </p>
+            <p class="hero-description">
+                A simpler way to manage your library. Organize books,
+                track issues and returns, and keep everything running
+                smoothly — all in one place.
+            </p>
 
-        <div class="landing-actions">
+            <div class="hero-actions">
+                <button type="button" class="btn btn-primary"
+                        onclick="openRegisterModal()">
+                    Create Your Library
+                    <span class="button-arrow">↗</span>
+                </button>
 
-            <button
-                type="button"
-                onclick="openLoginModal()"
-                class="login-button"
-            >
-                Login
-            </button>
+                <button type="button" class="btn btn-secondary"
+                        onclick="openLoginModal()">
+                    <span class="login-icon">↗</span>
+                    Sign in
+                </button>
+            </div>
 
-            <button
-                type="button"
-                onclick="openRegisterModal()"
-                class="register-button"
-            >
-                Create Library
-            </button>
-
+            <div class="hero-note">
+                <span class="note-check">✓</span>
+                <span>Simple to start</span>
+                <span class="note-divider"></span>
+                <span>Designed for librarians</span>
+            </div>
         </div>
 
+        
+<div class="hero-art reader-art"
+     aria-label="Animated reader reading and flipping through books">
+
+    <div class="reader-glow"></div>
+    <div class="reader-orbit orbit-one"></div>
+    <div class="reader-orbit orbit-two"></div>
+
+    <!-- Library shelves in the background -->
+    <div class="reader-shelf">
+        <div class="shelf-book sb-one"></div>
+        <div class="shelf-book sb-two"></div>
+        <div class="shelf-book sb-three"></div>
+        <div class="shelf-book sb-four"></div>
+        <div class="shelf-book sb-five"></div>
+        <div class="shelf-board"></div>
     </div>
 
+    <!-- Floating status cards -->
+    <div class="reader-card issue-card">
+        <span class="reader-icon">✓</span>
+        <span><strong>Issue book</strong><small>Choose a new story</small></span>
+    </div>
+
+    <div class="reader-card learn-card">
+        <span class="reader-icon">▤</span>
+        <span><strong>Read & learn</strong><small>Turn every page</small></span>
+    </div>
+
+    <div class="reader-card return-card">
+        <span class="reader-icon">↶</span>
+        <span><strong>Return book</strong><small>Ready for the next reader</small></span>
+    </div>
+
+    <!-- Books on the table -->
+    <div class="reader-table">
+        <div class="table-ring"></div>
+        <div class="table-book table-book-back">KNOWLEDGE</div>
+        <div class="table-book table-book-middle">STORIES</div>
+        <div class="table-book table-book-front">DISCOVERY</div>
+    </div>
+
+    <!-- CSS-built animated reader -->
+    <div class="reader-person">
+        <div class="person-hair-back"></div>
+        <div class="person-neck"></div>
+
+        <div class="person-body">
+            <span class="hood-detail"></span>
+        </div>
+
+        <div class="person-head">
+            <div class="person-hair"></div>
+            <div class="person-face">
+                <span class="person-eye eye-left"></span>
+                <span class="person-eye eye-right"></span>
+                <span class="person-glasses glasses-left"></span>
+                <span class="person-glasses glasses-right"></span>
+                <span class="person-glasses-bridge"></span>
+                <span class="person-nose"></span>
+                <span class="person-mouth"></span>
+            </div>
+        </div>
+
+        <div class="person-leg leg-left"></div>
+        <div class="person-leg leg-right"></div>
+        <div class="person-shoe shoe-left"></div>
+        <div class="person-shoe shoe-right"></div>
+
+        <div class="person-arm arm-left">
+            <span class="person-hand"></span>
+        </div>
+
+        <div class="person-arm arm-right">
+            <span class="person-hand"></span>
+        </div>
+    </div>
+
+    <!-- Book opens and its pages turn repeatedly -->
+    <div class="live-book">
+        <div class="live-book-back"></div>
+
+        <div class="live-pages">
+            <div class="live-page page-a">
+                <span></span><span></span><span></span>
+                <span></span><span></span>
+            </div>
+            <div class="live-page page-b">
+                <span></span><span></span><span></span>
+                <span></span><span></span>
+            </div>
+            <div class="live-page page-c">
+                <span></span><span></span><span></span>
+                <span></span><span></span>
+            </div>
+            <div class="live-page page-d">
+                <span></span><span></span><span></span>
+                <span></span><span></span>
+            </div>
+        </div>
+
+        <div class="live-book-cover">
+            <span class="live-book-symbol">✦</span>
+            <strong class="live-book-title">THE ART OF<br>DISCOVERY</strong>
+            <span class="live-book-line"></span>
+        </div>
+    </div>
+
+    <!-- Books move around the reader in a continuous loop -->
+    <div class="orbit-book orbit-book-one">IDEAS</div>
+    <div class="orbit-book orbit-book-two">WONDER</div>
+    <div class="orbit-book orbit-book-three">LEARN</div>
+
+    <div class="reader-spark spark-one">✦</div>
+    <div class="reader-spark spark-two">✧</div>
+
+    <div class="reader-caption">
+        <span class="live-dot"></span>
+        <span>Inside every book, a new world...</span>
+    </div>
 </div>
 
+    </section>
 
-<!-- =====================================================
-     LOGIN MODAL
-====================================================== -->
+    <footer class="landing-footer">
+        <span class="footer-mark">L</span>
+        <span>Less paperwork. More reading.</span>
+        <span class="footer-right">MADE FOR MODERN LIBRARIES <span>✦</span></span>
+    </footer>
+</main>
 
-<div
-    id="loginModal"
-    class="login-modal"
-    style="display: none;"
->
+<!-- Login Modal -->
+<div id="loginModal" class="landing-modal" aria-hidden="true">
+    <div class="modal-backdrop" onclick="closeLoginModal()"></div>
 
-    <div class="login-card">
+    <section class="modal-card" role="dialog"
+             aria-modal="true" aria-labelledby="loginTitle">
+        <button type="button" class="modal-close"
+                onclick="closeLoginModal()" aria-label="Close login">×</button>
 
-        <button
-            type="button"
-            class="login-close"
-            onclick="closeLoginModal()"
-        >
-            &times;
-        </button>
+        <!-- <div class="modal-brand-icon">L</div> -->
+        <p class="modal-eyebrow">WELCOME BACK</p>
+        <h2 id="loginTitle">Sign in to your library</h2>
+        <p class="modal-description">Pick up right where you left off.</p>
 
-        <h2>Welcome Back</h2>
+        <form action="{{ url_for('auth.login') }}" method="POST">
+            <label for="loginUsername">Username</label>
+            <input id="loginUsername" type="text" name="username"
+                   placeholder="Enter your username" autocomplete="username" required>
 
-        <p>
-            Login to access your library dashboard.
-        </p>
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" name="password"
+                   placeholder="Enter your password"
+                   autocomplete="current-password" required>
 
-        <form
-            method="POST"
-            action="{{ url_for('auth.login') }}"
-        >
-
-            <div class="form-group">
-
-                <label for="loginUsername">
-                    Username
-                </label>
-
-                <input
-                    type="text"
-                    id="loginUsername"
-                    name="username"
-                    placeholder="Enter your username"
-                    required
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label for="loginPassword">
-                    Password
-                </label>
-
-                <input
-                    type="password"
-                    id="loginPassword"
-                    name="password"
-                    placeholder="Enter your password"
-                    required
-                >
-
-            </div>
-
-            <button
-                type="submit"
-                class="login-submit"
-            >
-                Login
+            <button type="submit" class="btn btn-primary modal-submit">
+                Sign in <span class="button-arrow">→</span>
             </button>
-
         </form>
 
-        <div class="modal-switch">
-
-            <span>Don't have a library?</span>
-
-            <button
-                type="button"
-                onclick="switchToRegister()"
-            >
-                Create one
-            </button>
-
-        </div>
-
-    </div>
-
+        <p class="modal-switch">
+            New here?
+            <button type="button" onclick="switchToRegister()">Create a library</button>
+        </p>
+    </section>
 </div>
 
+<!-- Register Modal -->
+<div id="registerModal" class="landing-modal" aria-hidden="true">
+    <div class="modal-backdrop" onclick="closeRegisterModal()"></div>
 
-<!-- =====================================================
-     REGISTER MODAL
-====================================================== -->
-
-<div
-    id="registerModal"
-    class="login-modal"
-    style="display: none;"
->
-
-    <div class="login-card register-card">
-
-        <button
-            type="button"
-            class="login-close"
-            onclick="closeRegisterModal()"
-        >
-            &times;
-        </button>
-
-        <h2>Create Your Library</h2>
-
-        <p>
-            Create your library and administrator account.
-        </p>
-
-        <form
-            method="POST"
-            action="{{ url_for('auth.register') }}"
-        >
-
-            <!-- Library Name -->
-
-            <div class="form-group">
-
-                <label for="libraryName">
-                    Library Name
-                </label>
-
-                <input
-                    type="text"
-                    id="libraryName"
-                    name="library_name"
-                    placeholder="Enter your library name"
-                    required
-                >
-
-            </div>
+    <section class="modal-card" role="dialog"
+             aria-modal="true" aria-labelledby="registerTitle">
+        <button type="button" class="modal-close"
+                onclick="closeRegisterModal()" aria-label="Close registration">×</button>
 
 
-            <!-- Admin Username -->
+        <p class="modal-eyebrow">GET STARTED</p>
+        <h2 id="registerTitle">Create your library</h2>
+        <p class="modal-description">Set up your library workspace in a few steps.</p>
 
-            <div class="form-group">
+        <form action="{{ url_for('auth.register') }}" method="POST">
+            <label for="libraryName">Library name</label>
+            <input id="libraryName" type="text" name="library_name"
+                   placeholder="e.g. Central Library" required>
 
-                <label for="registerUsername">
-                    Admin Username
-                </label>
+            <label for="registerUsername">Username</label>
+            <input id="registerUsername" type="text" name="username"
+                   placeholder="Choose a username" autocomplete="username" required>
 
-                <input
-                    type="text"
-                    id="registerUsername"
-                    name="username"
-                    placeholder="Choose a username"
-                    required
-                >
+            <label for="registerEmail">Email address</label>
+            <input id="registerEmail" type="email" name="email"
+                   placeholder="you@example.com" autocomplete="email" required>
 
-            </div>
+            <label for="registerPassword">Password</label>
+            <input id="registerPassword" type="password" name="password"
+                   placeholder="Create a password" autocomplete="new-password" required>
 
-
-            <!-- Admin Email -->
-
-            <div class="form-group">
-
-                <label for="registerEmail">
-                    Admin Email
-                </label>
-
-                <input
-                    type="email"
-                    id="registerEmail"
-                    name="email"
-                    placeholder="Enter your email"
-                    required
-                >
-
-            </div>
-
-
-            <!-- Password -->
-
-            <div class="form-group">
-
-                <label for="registerPassword">
-                    Password
-                </label>
-
-                <input
-                    type="password"
-                    id="registerPassword"
-                    name="password"
-                    placeholder="Minimum 8 characters"
-                    minlength="8"
-                    required
-                >
-
-            </div>
-
-
-            <!-- Submit -->
-
-            <button
-                type="submit"
-                class="login-submit"
-            >
-                Create Library
+            <button type="submit" class="btn btn-primary modal-submit">
+                Create Library <span class="button-arrow">→</span>
             </button>
-
         </form>
 
-        <div class="modal-switch">
-
-            <span>Already have an account?</span>
-
-            <button
-                type="button"
-                onclick="switchToLogin()"
-            >
-                Login
-            </button>
-
-        </div>
-
-    </div>
-
+        <p class="modal-switch">
+            Already have an account?
+            <button type="button" onclick="switchToLogin()">Sign in</button>
+        </p>
+    </section>
 </div>
-
-
-<!-- =====================================================
-     JAVASCRIPT
-====================================================== -->
 
 <script>
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
 
-function openLoginModal() {
+        document.querySelectorAll(".landing-modal").forEach(item => {
+            item.classList.remove("is-open");
+            item.setAttribute("aria-hidden", "true");
+        });
 
-    document.getElementById("loginModal").style.display = "flex";
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
 
-}
+        const firstInput = modal.querySelector("input");
+        if (firstInput) {
+            window.setTimeout(() => firstInput.focus(), 120);
+        }
+    }
 
+    function hideModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
 
-function closeLoginModal() {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
 
-    document.getElementById("loginModal").style.display = "none";
+        if (!document.querySelector(".landing-modal.is-open")) {
+            document.body.classList.remove("modal-open");
+        }
+    }
 
-}
+    function openLoginModal() {
+        showModal("loginModal");
+    }
 
+    function closeLoginModal() {
+        hideModal("loginModal");
+    }
 
-function openRegisterModal() {
+    function openRegisterModal() {
+        showModal("registerModal");
+    }
 
-    document.getElementById("registerModal").style.display = "flex";
+    function closeRegisterModal() {
+        hideModal("registerModal");
+    }
 
-}
-
-
-function closeRegisterModal() {
-
-    document.getElementById("registerModal").style.display = "none";
-
-}
-
-
-function switchToRegister() {
-
-    closeLoginModal();
-
-    openRegisterModal();
-
-}
-
-
-function switchToLogin() {
-
-    closeRegisterModal();
-
-    openLoginModal();
-
-}
-
-
-/* Close when clicking outside the card */
-
-window.addEventListener("click", function(event) {
-
-    const loginModal =
-        document.getElementById("loginModal");
-
-    const registerModal =
-        document.getElementById("registerModal");
-
-
-    if (event.target === loginModal) {
-
+    function switchToRegister() {
         closeLoginModal();
-
+        openRegisterModal();
     }
 
-
-    if (event.target === registerModal) {
-
+    function switchToLogin() {
         closeRegisterModal();
-
+        openLoginModal();
     }
 
-});
-
-
-/* Close with Escape */
-
-window.addEventListener("keydown", function(event) {
-
-    if (event.key === "Escape") {
-
-        closeLoginModal();
-
-        closeRegisterModal();
-
-    }
-
-});
-
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape") {
+            closeLoginModal();
+            closeRegisterModal();
+        }
+    });
 </script>
-
 {% endblock %}
