@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}Add Book{% endblock %}
@@ -6,385 +7,747 @@
 
 <div class="dashboard-container book-form-page">
 
-    <!-- =====================================================
-         PAGE HEADER
-    ====================================================== -->
-
-    <div class="dashboard-page-header">
-
+    <!-- Page Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
-
-            <!-- <span class="dashboard-eyebrow">
-                LIBRARY
-            </span> -->
-
-            <h1>Add a new book</h1>
-
+            <h2 class="mb-1">Add Book</h2>
+            <p class="text-muted mb-0">
+                Add a book to your library collection.
+            </p>
         </div>
 
-
-        <a
-            href="{{ url_for('books.list_books') }}"
-            class="btn btn-light"
-        >
-            <i class="bi bi-arrow-left"></i>
+        <a href="{{ url_for('books.list_books') }}"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
             Back to Books
         </a>
-
     </div>
 
+    <!-- SMALL INLINE DUPLICATE ISBN ALERT -->
+    {% if existing_book %}
+        <div class="alert alert-warning py-2 px-3 mb-3 small" role="alert">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            <strong>Book already exists:</strong>
+            {{ existing_book.title }}.
+            <a
+                href="{{ url_for('books.edit_book', book_id=existing_book.id) }}"
+                class="alert-link ms-1"
+            >
+                Edit existing book
+            </a>
+            to increase its quantity.
+        </div>
+    {% endif %}
 
-    <!-- =====================================================
-         FORM WORKSPACE
-    ====================================================== -->
+    <form method="POST"
+          action="{{ url_for('books.add_book') }}"
+          id="add-book-form">
 
-    <div class="book-form-workspace">
+        <!-- ISBN / BARCODE: FIRST SECTION -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-3 p-md-4">
 
+                <div class="d-flex align-items-start gap-3 mb-3">
+                    <div class="add-book-icon">
+                        <i class="bi bi-upc-scan"></i>
+                    </div>
 
-        <!-- =================================================
-             MAIN FORM
-        ================================================== -->
-
-        <div class="card book-form-panel">
-
-            <div class="book-form-panel-header">
-
-                <div class="book-form-panel-icon">
-                    <i class="bi bi-book"></i>
+                    <div>
+                        <h5 class="mb-1">ISBN & Barcode</h5>
+                        <p class="text-muted small mb-0">
+                            Scan a book barcode or enter its ISBN to find book details.
+                        </p>
+                    </div>
                 </div>
 
-                <div>
+                <label for="isbn" class="form-label fw-semibold">
+                    ISBN / Book Barcode
+                </label>
 
-                    <h2>Book Information</h2>
+                <div class="input-group">
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="isbn"
+                        name="isbn"
+                        placeholder="Enter ISBN or scan barcode"
+                        autocomplete="off"
+                    >
 
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary"
+                        id="start-barcode-scanner"
+                        aria-expanded="false"
+                        aria-controls="isbn-camera-popup"
+                    >
+                        <i class="bi bi-camera me-1"></i>
+                        Scan
+                    </button>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="lookup-isbn-button"
+                        data-lookup-url="{{ url_for('books.lookup_isbn') }}"
+                    >
+                        <i class="bi bi-search me-1"></i>
+                        Find Book Details
+                    </button>
+
+                    <span class="small text-muted align-self-center">
+                        No match? You can fill in the details manually.
+                    </span>
+                </div>
+
+                <!-- Compact popup-style camera panel -->
+                <div id="isbn-camera-popup"
+                     class="barcode-popup mt-3"
+                     hidden>
+
+                    <div class="barcode-popup-header">
+                        <div>
+                            <h6 class="mb-1">
+                                <i class="bi bi-camera-video me-1"></i>
+                                Scan Book Barcode
+                            </h6>
+                            <p class="small text-muted mb-0">
+                                Hold the barcode inside the camera frame.
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            id="stop-barcode-scanner"
+                            aria-label="Close camera scanner"
+                            title="Close scanner"
+                        >
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="barcode-camera-frame">
+                        <div id="isbn-camera-reader"></div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center gap-2 mt-2">
+                        <small class="text-muted">
+                            Keep the barcode clear and steady.
+                        </small>
+
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            id="stop-barcode-scanner-text"
+                        >
+                            Stop Camera
+                        </button>
+                    </div>
+                </div>
+
+                <p id="barcode-scan-status"
+                   class="small mt-3 mb-0"
+                   role="status"
+                   aria-live="polite"></p>
+
+            </div>
+        </div>
+
+        <!-- BASIC INFORMATION -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-3 p-md-4">
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="add-book-icon">
+                        <i class="bi bi-book"></i>
+                    </div>
+
+                    <div>
+                        <h5 class="mb-1">Book Information</h5>
+                        <p class="text-muted small mb-0">
+                            Enter the book's title and publication details.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="title" class="form-label fw-semibold">
+                        Book Title <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="title"
+                        name="title"
+                        placeholder="Enter book title"
+                        required
+                    >
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="author" class="form-label fw-semibold">
+                            Author
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="author"
+                            name="author"
+                            placeholder="Enter author name"
+                        >
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="publisher" class="form-label fw-semibold">
+                            Publisher
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="publisher"
+                            name="publisher"
+                            placeholder="Enter publisher name"
+                        >
+                    </div>
+                </div>
+
+                <div class="mb-0">
+                    <label for="category" class="form-label fw-semibold">
+                        Category
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="category"
+                        name="category"
+                        placeholder="e.g. Fiction, Science, Technology"
+                    >
                 </div>
 
             </div>
-
-
-            <form
-                method="POST"
-                class="book-form"
-            >
-
-                <!-- =================================================
-                     BASIC INFORMATION
-                ================================================== -->
-
-                <div class="book-form-section">
-
-                    <div class="book-section-heading">
-
-                        <div class="book-section-number">
-                            01
-                        </div>
-
-                        <div>
-
-                            <h3>Basic Information</h3>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="book-form-grid">
-
-
-                        <!-- Book Code -->
-
-                        <div class="book-form-group">
-
-                            <label
-                                for="book_code"
-                                class="book-form-label"
-                            >
-                                Book Code
-                                <span>*</span>
-                            </label>
-
-
-                            <div class="book-input-wrapper">
-
-                                <i class="bi bi-upc-scan"></i>
-
-                                <input
-                                    type="text"
-                                    class="book-input"
-                                    id="book_code"
-                                    name="book_code"
-                                    placeholder="e.g. BK001"
-                                    required
-                                >
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- Title -->
-
-                        <div class="book-form-group">
-
-                            <label
-                                for="title"
-                                class="book-form-label"
-                            >
-                                Title
-                                <span>*</span>
-                            </label>
-
-
-                            <div class="book-input-wrapper">
-
-                                <i class="bi bi-book"></i>
-
-                                <input
-                                    type="text"
-                                    class="book-input"
-                                    id="title"
-                                    name="title"
-                                    placeholder="Enter book title"
-                                    required
-                                >
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- Author -->
-
-                        <div class="book-form-group">
-
-                            <label
-                                for="author"
-                                class="book-form-label"
-                            >
-                                Author
-                            </label>
-
-
-                            <div class="book-input-wrapper">
-
-                                <i class="bi bi-person"></i>
-
-                                <input
-                                    type="text"
-                                    class="book-input"
-                                    id="author"
-                                    name="author"
-                                    placeholder="Enter author name"
-                                >
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- Publisher -->
-
-                        <div class="book-form-group">
-
-                            <label
-                                for="publisher"
-                                class="book-form-label"
-                            >
-                                Publisher
-                            </label>
-
-
-                            <div class="book-input-wrapper">
-
-                                <i class="bi bi-building"></i>
-
-                                <input
-                                    type="text"
-                                    class="book-input"
-                                    id="publisher"
-                                    name="publisher"
-                                    placeholder="Enter publisher"
-                                >
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- =================================================
-                     CLASSIFICATION
-                ================================================== -->
-
-                <div class="book-form-section">
-
-                    <div class="book-section-heading">
-
-                        <div class="book-section-number">
-                            02
-                        </div>
-
-                        <div>
-
-                            <h3>Classification & Identification</h3>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="book-form-grid">
-
-
-                        <!-- Category -->
-
-                        <div class="book-form-group">
-
-                            <label
-                                for="category"
-                                class="book-form-label"
-                            >
-                                Category
-                            </label>
-
-
-                            <div class="book-input-wrapper">
-
-                                <i class="bi bi-tags"></i>
-
-                                <input
-                                    type="text"
-                                    class="book-input"
-                                    id="category"
-                                    name="category"
-                                    placeholder="e.g. Computer Science"
-                                >
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- ISBN -->
-
-                        <div class="book-form-group">
-
-                            <label
-                                for="isbn"
-                                class="book-form-label"
-                            >
-                                ISBN
-                            </label>
-
-
-                            <div class="book-input-wrapper">
-
-                                <i class="bi bi-upc"></i>
-
-                                <input
-                                    type="text"
-                                    class="book-input"
-                                    id="isbn"
-                                    name="isbn"
-                                    placeholder="Enter ISBN"
-                                >
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- =================================================
-                     INVENTORY
-                ================================================== -->
-
-                <div class="book-form-section">
-
-                    <div class="book-section-heading">
-
-                        <div class="book-section-number">
-                            03
-                        </div>
-
-                        <div>
-
-                            <h3>Inventory</h3>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="book-inventory-field">
-
-                        <label
-                            for="total_copies"
-                            class="book-form-label"
-                        >
-                            Total Copies
-                            <span>*</span>
-                        </label>
-
-
-                        <div class="book-input-wrapper">
-
-                            <i class="bi bi-stack"></i>
-
-                            <input
-                                type="number"
-                                class="book-input"
-                                id="total_copies"
-                                name="total_copies"
-                                value="1"
-                                min="1"
-                                placeholder="1"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- =================================================
-                     ACTIONS
-                ================================================== -->
-
-                <div class="book-form-actions">
-
-                    <a
-                        href="{{ url_for('books.list_books') }}"
-                        class="btn btn-light book-cancel-button"
-                    >
-                        Cancel
-                    </a>
-
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary book-submit-button"
-                    >
-                        <i class="bi bi-check-circle"></i>
-                        Save Book
-                    </button>
-
-                </div>
-
-            </form>
-
         </div>
 
-    </div>
+        <!-- INVENTORY -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-3 p-md-4">
 
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="add-book-icon">
+                        <i class="bi bi-collection"></i>
+                    </div>
+
+                    <div>
+                        <h5 class="mb-1">Inventory</h5>
+                        <p class="text-muted small mb-0">
+                            Specify how many copies are being added.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="total_copies" class="form-label fw-semibold">
+                            Total Copies <span class="text-danger">*</span>
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="total_copies"
+                            name="total_copies"
+                            min="1"
+                            value="1"
+                            required
+                        >
+
+                        <div class="form-text">
+                            Enter at least one copy.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- FORM ACTIONS -->
+        <div class="d-flex flex-wrap justify-content-end gap-2 mb-4">
+            <a href="{{ url_for('books.list_books') }}"
+               class="btn btn-light border">
+                Cancel
+            </a>
+
+            <button type="submit"
+                    class="btn btn-primary px-4"
+                    id="save-book-button">
+                <i class="bi bi-check-circle me-1"></i>
+                Save Book
+            </button>
+        </div>
+
+    </form>
 </div>
+
+<style>
+    .book-form-page {
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .book-form-page .card {
+        border-radius: 12px;
+    }
+
+    .book-form-page .form-control {
+        min-height: 42px;
+    }
+
+    .add-book-icon {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: var(--bs-primary-bg-subtle, #eaf2ff);
+        color: var(--bs-primary, #0d6efd);
+        font-size: 1.2rem;
+    }
+
+    
+    /* Small, centered camera popup */
+    .barcode-popup {
+        width: 100%;
+        max-width: 390px;
+        margin: 12px auto 0;
+        padding: 12px;
+        border: 1px solid var(--bs-border-color, #dee2e6);
+        border-radius: 12px;
+        background: var(--bs-body-bg, #fff);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        box-sizing: border-box;
+    }
+
+    .barcode-popup[hidden] {
+        display: none !important;
+    }
+
+    .barcode-popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    /* Center the camera frame */
+    .barcode-camera-frame {
+        width: 100%;
+        max-width: 350px;
+        margin: 0 auto;
+        overflow: hidden;
+        border-radius: 8px;
+        background: #111;
+        box-sizing: border-box;
+    }
+
+    /* Center scanner content inside the frame */
+    #isbn-camera-reader {
+        width: 100%;
+        min-height: 0;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    /* Camera preview sizing */
+    #isbn-camera-reader video {
+        display: block;
+        width: 100% !important;
+        max-height: 210px !important;
+        object-fit: cover;
+        border-radius: 8px;
+        margin: 0 auto;
+    }
+
+    #isbn-camera-reader img {
+        max-width: 100%;
+    }
+
+    /* Keep scanner controls compact */
+    #isbn-camera-reader__dashboard {
+        padding: 6px !important;
+        font-size: 12px !important;
+    }
+
+    #isbn-camera-reader__dashboard_section_csr button,
+    #isbn-camera-reader__dashboard_section_swaplink {
+        font-size: 12px !important;
+        margin: 3px !important;
+    }
+
+    /* Hide empty status text */
+    #barcode-scan-status:empty {
+        display: none;
+    }
+
+    /* Responsive layout for mobile */
+    @media (max-width: 576px) {
+        .barcode-popup {
+            max-width: 100%;
+        }
+
+        .barcode-camera-frame {
+            max-width: 100%;
+        }
+
+        #isbn-camera-reader video {
+            max-height: 180px !important;
+        }
+    }
+</style>
+
+<!-- Barcode scanning library; no image upload -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const isbnInput = document.getElementById("isbn");
+    const titleInput = document.getElementById("title");
+    const authorInput = document.getElementById("author");
+    const publisherInput = document.getElementById("publisher");
+    const categoryInput = document.getElementById("category");
+
+    const startButton = document.getElementById("start-barcode-scanner");
+    const stopButton = document.getElementById("stop-barcode-scanner");
+    const stopTextButton = document.getElementById("stop-barcode-scanner-text");
+    const cameraPopup = document.getElementById("isbn-camera-popup");
+    const status = document.getElementById("barcode-scan-status");
+    const lookupButton = document.getElementById("lookup-isbn-button");
+    const form = document.getElementById("add-book-form");
+
+    let scanner = null;
+    let scanning = false;
+    let detected = false;
+    let lookupInProgress = false;
+
+    function playBeep() {
+        try {
+            const AudioContextClass =
+                window.AudioContext || window.webkitAudioContext;
+
+            if (!AudioContextClass) return;
+
+            const audioContext = new AudioContextClass();
+
+            audioContext.resume().then(function () {
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+
+                oscillator.type = "sine";
+                oscillator.frequency.value = 1000;
+                gain.gain.value = 0.15;
+
+                oscillator.connect(gain);
+                gain.connect(audioContext.destination);
+
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.16);
+
+                oscillator.onended = function () {
+                    audioContext.close();
+                };
+            }).catch(function () {
+                audioContext.close();
+            });
+        } catch (error) {
+            console.warn("Beep sound is unavailable:", error);
+        }
+    }
+
+    async function stopScanner() {
+        const currentScanner = scanner;
+
+        scanner = null;
+        scanning = false;
+
+        cameraPopup.hidden = true;
+        startButton.disabled = false;
+        startButton.setAttribute("aria-expanded", "false");
+
+        if (currentScanner) {
+            try {
+                await currentScanner.stop();
+            } catch (error) {
+                console.warn("Scanner stop notice:", error);
+            }
+
+            try {
+                await currentScanner.clear();
+            } catch (error) {
+                console.warn("Scanner cleanup notice:", error);
+            }
+        }
+    }
+
+    async function lookupBookDetails() {
+        const isbn = isbnInput.value.trim();
+
+        if (!isbn) {
+            status.textContent = "Please enter or scan an ISBN first.";
+            isbnInput.focus();
+            return;
+        }
+
+        if (lookupInProgress) return;
+
+        lookupInProgress = true;
+        lookupButton.disabled = true;
+
+        const originalButtonText = lookupButton.innerHTML;
+        lookupButton.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-1" ' +
+            'aria-hidden="true"></span> Searching...';
+
+        status.textContent = "Searching available book metadata sources...";
+
+        try {
+            const response = await fetch(lookupButton.dataset.lookupUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({ isbn: isbn })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.found) {
+                status.textContent =
+                    data.message ||
+                    "No matching book details found. Please enter the details manually.";
+                return;
+            }
+
+            const metadata = data.metadata || {};
+
+            if (metadata.title) titleInput.value = metadata.title;
+            if (metadata.author) authorInput.value = metadata.author;
+            if (metadata.publisher) publisherInput.value = metadata.publisher;
+            if (metadata.category) categoryInput.value = metadata.category;
+
+            if (data.isbn) {
+                isbnInput.value = data.isbn;
+            } else if (metadata.isbn) {
+                isbnInput.value = metadata.isbn;
+            }
+
+            status.textContent =
+                data.message ||
+                "Book details found. Please review the fields before saving.";
+
+        } catch (error) {
+            console.error("Book metadata lookup failed:", error);
+
+            status.textContent =
+                "Unable to fetch book details right now. You can enter the details manually.";
+        } finally {
+            lookupInProgress = false;
+            lookupButton.disabled = false;
+            lookupButton.innerHTML = originalButtonText;
+        }
+    }
+
+    lookupButton.addEventListener("click", lookupBookDetails);
+
+    async function startScanner() {
+        if (scanning || scanner) return;
+
+        if (typeof Html5Qrcode === "undefined") {
+            status.textContent =
+                "Scanner library could not load. Check your internet connection or enter the ISBN manually.";
+            return;
+        }
+
+        if (!window.isSecureContext) {
+            status.textContent =
+                "Camera access requires HTTPS or localhost. You can still enter the ISBN manually.";
+            return;
+        }
+
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
+            status.textContent =
+                "This browser does not support camera scanning. Please enter the ISBN manually.";
+            return;
+        }
+
+        detected = false;
+        startButton.disabled = true;
+        startButton.setAttribute("aria-expanded", "true");
+        cameraPopup.hidden = false;
+
+        status.textContent =
+            "Starting camera. Allow camera permission when prompted.";
+
+        const supportedFormats = [
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.EAN_8,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.UPC_E,
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.CODE_39,
+            Html5QrcodeSupportedFormats.CODE_93,
+            Html5QrcodeSupportedFormats.CODABAR,
+            Html5QrcodeSupportedFormats.ITF,
+            Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION
+        ].filter(function (format) {
+            return format !== undefined;
+        });
+
+        const newScanner = new Html5Qrcode("isbn-camera-reader", {
+            formatsToSupport: supportedFormats,
+            verbose: false
+        });
+
+        scanner = newScanner;
+
+        try {
+            await newScanner.start(
+                { facingMode: "environment" },
+                {
+                    fps: 10,
+                    aspectRatio: 1.5,
+                    qrbox: function (width, height) {
+                        return {
+                            width: Math.max(120, Math.min(280, Math.floor(width * 0.85))),
+                            height: Math.max(70, Math.min(120, Math.floor(height * 0.45)))
+                        };
+                    }
+                },
+                async function (decodedText) {
+                    if (detected) return;
+
+                    const code = String(decodedText || "")
+                        .replace(/\s/g, "")
+                        .trim();
+
+                    if (!code) return;
+
+                    detected = true;
+                    playBeep();
+
+                    status.textContent =
+                        "Barcode detected: " + code +
+                        ". Checking whether it is a book ISBN...";
+
+                    await stopScanner();
+
+                    const isBookIsbn13 = /^(978|979)\d{10}$/.test(code);
+
+                    if (isBookIsbn13) {
+                        isbnInput.value = code;
+                        isbnInput.dispatchEvent(
+                            new Event("input", { bubbles: true })
+                        );
+
+                        status.textContent =
+                            "ISBN detected. Fetching book details...";
+
+                        await lookupBookDetails();
+                    } else {
+                        /*
+                         * Keep non-ISBN barcode visible for manual use.
+                         * The current backend expects ISBN, so don't send
+                         * arbitrary product barcodes to the ISBN lookup.
+                         */
+                        isbnInput.value = code;
+
+                        status.textContent =
+                            "Barcode scanned, but it is not a recognised ISBN-13. " +
+                            "The value is in the field; fill in the book details manually.";
+                    }
+                },
+                function () {
+                    // No barcode in the current camera frame is normal.
+                }
+            );
+
+            scanning = true;
+
+            status.textContent =
+                "Camera active. Hold the barcode steady inside the frame.";
+
+        } catch (error) {
+            console.error("Could not start barcode scanner:", error);
+
+            if (scanner === newScanner) scanner = null;
+
+            scanning = false;
+            cameraPopup.hidden = true;
+            startButton.disabled = false;
+            startButton.setAttribute("aria-expanded", "false");
+
+            try {
+                await newScanner.clear();
+            } catch (_) {}
+
+            status.textContent =
+                "Camera could not start. Allow camera permission, close other camera apps, or enter the ISBN manually.";
+        }
+    }
+
+    startButton.addEventListener("click", startScanner);
+
+    stopButton.addEventListener("click", async function () {
+        await stopScanner();
+        status.textContent = "Camera stopped. You can enter the ISBN manually.";
+    });
+
+    stopTextButton.addEventListener("click", async function () {
+        await stopScanner();
+        status.textContent = "Camera stopped. You can enter the ISBN manually.";
+    });
+
+    /*
+     * Supports USB barcode scanners that type the code into the ISBN field.
+     */
+    isbnInput.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter") return;
+
+        event.preventDefault();
+
+        const code = isbnInput.value.replace(/[\s-]/g, "").trim();
+
+        if (/^(978|979)\d{10}$/.test(code)) {
+            lookupBookDetails();
+        } else if (code) {
+            status.textContent =
+                "Barcode entered. If it is not an ISBN, fill in the book details manually.";
+        }
+    });
+
+    form.addEventListener("submit", function () {
+        if (scanner && scanning) {
+            stopScanner();
+        }
+    });
+
+    window.addEventListener("pagehide", function () {
+        if (scanner && scanning) {
+            scanner.stop().catch(function () {});
+        }
+    });
+});
+</script>
 
 {% endblock %}
