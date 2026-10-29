@@ -60,37 +60,25 @@ class BookTransaction(db.Model):
         default=lambda: datetime.now(timezone.utc)
     )
 
-    # -----------------------------------------------------
-    # TRANSACTION HISTORY RELATIONSHIP
-    # -----------------------------------------------------
-
+    # Transaction history relationship
     history = db.relationship(
         "TransactionHistory",
         back_populates="active_transaction"
     )
 
-    # -----------------------------------------------------
-    # BOOK RELATIONSHIP
-    # -----------------------------------------------------
-
+    # Book relationship
     book = db.relationship(
         "Book",
         back_populates="transactions"
     )
 
-    # -----------------------------------------------------
-    # EMPLOYEE RELATIONSHIP
-    # -----------------------------------------------------
-
+    # Employee relationship
     employee = db.relationship(
         "Employee",
         back_populates="transactions"
     )
 
-    # -----------------------------------------------------
-    # LIBRARY RELATIONSHIP
-    # -----------------------------------------------------
-
+    # Library relationship
     library = db.relationship(
         "Library",
         back_populates="book_transactions"

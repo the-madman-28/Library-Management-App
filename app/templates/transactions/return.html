@@ -1,284 +1,192 @@
+
 {% extends "base.html" %}
 
-{% block title %}Return Book{% endblock %}
+{% block title %}Return Books{% endblock %}
 
 {% block content %}
 
-<div class="dashboard-container issue-page">
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/return.css') }}"
+>
 
-    <!-- =====================================================
-         PAGE HEADER
-    ====================================================== -->
+<div class="container py-4 return-page">
 
-    <div class="page-header">
-
+    <!-- Page Header -->
+    <div class="return-header mb-4">
         <div>
-            <h1>Return Book</h1>
+            <h2 class="mb-1">Return Books</h2>
+            <p class="return-muted mb-0">
+                Search by employee or book, scan an ISBN, and select the books to return.
+            </p>
         </div>
 
         <a
-            href="{{ url_for('main.index') }}"
-            class="btn btn-light"
+            href="{{ url_for('main.dashboard') }}"
+            class="btn btn-dark dashboard-button"
         >
-            <i class="bi bi-arrow-left"></i>
-            Dashboard
+            ← Dashboard
         </a>
-
     </div>
 
+    <!-- Search -->
+    <div class="return-card mb-4">
+        <div class="p-3 p-md-4">
 
-    {% if transactions %}
+            <label for="returnSearch" class="form-label fw-semibold">
+                Search Employee or Book
+            </label>
 
-    <div class="issue-workspace">
+            <div class="input-group">
+                <input
+                    id="returnSearch"
+                    type="search"
+                    class="form-control"
+                    placeholder="Employee name/code or book title/code"
+                    autocomplete="off"
+                >
 
-        <!-- =====================================================
-             RETURN FORM
-        ====================================================== -->
-
-        <div class="card issue-form-panel">
-
-            <div class="issue-panel-header">
-
-                <div class="issue-panel-icon">
-                    <i class="bi bi-arrow-return-left"></i>
-                </div>
-
-                <div>
-                    <h2>Book Return</h2>
-
-                    <p>
-                        Select an active loan to complete the return.
-                    </p>
-                </div>
-
+                <button
+                    id="scanButton"
+                    type="button"
+                    class="btn btn-primary"
+                >
+                    Scan ISBN
+                </button>
             </div>
 
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <small class="return-muted">
+                    Live search starts after typing 2 characters.
+                </small>
+
+                <span
+                    id="searchSpinner"
+                    class="search-spinner"
+                    aria-label="Searching"
+                ></span>
+            </div>
+
+            <!-- ISBN Camera -->
+            <div id="scannerPanel">
+                <div class="fw-semibold mb-2">Scan Book ISBN</div>
+
+                <div id="reader"></div>
+
+                <button
+                    id="stopScannerButton"
+                    type="button"
+                    class="btn btn-sm btn-outline-danger mt-3"
+                >
+                    Close Camera
+                </button>
+            </div>
+
+            <div
+                id="liveStatus"
+                class="mt-3"
+                aria-live="polite"
+            ></div>
+
+        </div>
+    </div>
+
+    <!-- Search Results -->
+    <div id="resultsSection" class="mb-4" hidden>
+        <h5 class="mb-3">Active Issued Books</h5>
+        <div id="resultsContainer"></div>
+    </div>
+
+    <!-- Selected Books -->
+    <div class="return-card">
+        <div class="p-3 border-bottom selected-header">
+            <h5 class="mb-0">Selected for Return</h5>
+            <span id="selectedCount" class="badge bg-primary">
+                0 selected
+            </span>
+        </div>
+
+        <div class="p-3 p-md-4">
+
+            <div id="selectedBooks">
+                <p class="return-muted mb-0">
+                    No books selected yet.
+                </p>
+            </div>
 
             <form
+                id="returnForm"
                 method="POST"
-                class="issue-form"
+                action="{{ url_for('transactions.return_book') }}"
+                class="mt-3"
+                hidden
             >
-
-                <!-- =================================================
-                     TRANSACTION SELECTION
-                ================================================== -->
-
-                <div class="issue-form-section">
-
-                    <div class="issue-section-heading">
-
-                        <div class="issue-section-number">
-                            01
-                        </div>
-
-                        <div>
-                            <h3>Select Issued Book <span>*</span></h3>
-
-                            <p>
-                                Search for the book or employee associated with the loan.
-                            </p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="issue-input-wrapper">
-
-                        <select
-                            class="issue-select searchable-select"
-                            id="transaction_id"
-                            name="transaction_id"
-                            required
-                            data-search-placeholder="Search book, employee, or code..."
-                        >
-
-                            <option value=""></option>
-
-                            {% for transaction in transactions %}
-
-                            <option value="{{ transaction.id }}">
-                                {{ transaction.book.book_code }}
-                                -
-                                {{ transaction.book.title }}
-                                |
-                                Borrowed by:
-                                {{ transaction.employee.employee_code }}
-                                - {{ transaction.employee.name }}
-                                |
-                                Due:
-                                {{ transaction.due_date }}
-                            </option>
-
-                            {% endfor %}
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-
-                <!-- =================================================
-                     ACTIONS
-                ================================================== -->
-
-                <div class="issue-form-actions">
-
-                    <a
-                        href="{{ url_for('main.index') }}"
-                        class="btn btn-light issue-cancel-button"
+                {% if csrf_token is defined %}
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        value="{{ csrf_token() }}"
                     >
-                        Cancel
-                    </a>
+                {% endif %}
 
-                    <button
-                        type="submit"
-                        class="btn btn-success issue-submit-button"
-                    >
-                        <i class="bi bi-arrow-return-left"></i>
-                        Return Book
-                    </button>
+                <div id="selectedInputs"></div>
 
-                </div>
+                <button
+                    id="returnSubmitButton"
+                    type="submit"
+                    class="btn btn-success"
+                >
+                    Return Selected Books
+                </button>
 
+                <button
+                    type="button"
+                    id="clearSelectionButton"
+                    class="btn btn-outline-secondary ms-2"
+                >
+                    Clear Selection
+                </button>
             </form>
 
-        </div>
+            <!-- Inline Confirmation -->
+            <div
+                id="returnConfirmation"
+                aria-live="polite"
+                hidden
+            >
+                <p id="confirmationText" class="fw-semibold"></p>
 
+                <button
+                    type="button"
+                    id="confirmReturnButton"
+                    class="btn btn-success me-2"
+                >
+                    Yes, Return Books
+                </button>
 
-        <!-- =====================================================
-             INFORMATION PANEL
-        ====================================================== -->
-
-        <aside class="issue-info-panel">
-
-            <!-- Current Transactions -->
-
-            <div class="issue-info-card">
-
-                <div class="issue-info-card-header">
-
-                    <div class="issue-info-card-icon">
-                        <i class="bi bi-journal-check"></i>
-                    </div>
-
-                    <div>
-                        <h3>Active Loans</h3>
-
-                        <p>
-                            Currently issued books
-                        </p>
-                    </div>
-
-                </div>
-
-
-                <div class="issue-info-list">
-
-                    <div class="issue-info-item">
-
-                        <span>
-                            <i class="bi bi-book"></i>
-                            Issued Books
-                        </span>
-
-                        <strong>
-                            {{ transactions|length }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
+                <button
+                    type="button"
+                    id="cancelReturnButton"
+                    class="btn btn-outline-secondary"
+                >
+                    Cancel
+                </button>
             </div>
 
-        </aside>
-
-    </div>
-
-
-    {% else %}
-
-    <!-- =========================================================
-         EMPTY STATE
-    ========================================================== -->
-
-    <div class="card return-empty-state">
-
-        <div class="return-empty-icon">
-            <i class="bi bi-journal-check"></i>
         </div>
-
-        <h2>No Issued Books</h2>
-
-        <p>
-            There are currently no issued books available to return.
-        </p>
-
-        <a
-            href="{{ url_for('main.index') }}"
-            class="btn btn-primary"
-        >
-            <i class="bi bi-arrow-left"></i>
-            Back to Dashboard
-        </a>
-
     </div>
 
-    {% endif %}
+    <!-- Flask-generated URLs for JavaScript -->
+    <div
+        id="returnConfig"
+        data-search-url="{{ url_for('transactions.search_return_loans') }}"
+        data-isbn-url="{{ url_for('transactions.lookup_return_isbn') }}"
+        hidden
+    ></div>
 
 </div>
 
-
-<!-- =========================================================
-     TOM SELECT
-========================================================== -->
-
-<link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.bootstrap5.min.css"
->
-
-<script
-    src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js">
-</script>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const transactionSelect =
-        document.getElementById("transaction_id");
-
-    if (!transactionSelect) {
-        return;
-    }
-
-    new TomSelect(transactionSelect, {
-        create: false,
-        allowEmptyOption: true,
-
-        placeholder: "Search book, employee, or code...",
-
-        maxOptions: 500,
-
-        searchField: [
-            "text"
-        ],
-
-        sortField: {
-            field: "text",
-            direction: "asc"
-        },
-
-        closeAfterSelect: true,
-
-        plugins: [
-            "clear_button"
-        ]
-    });
-
-});
-</script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="{{ url_for('static', filename='js/return.js') }}" defer></script>
 
 {% endblock %}
