@@ -1,3 +1,4 @@
+
 from flask import (
     Blueprint,
     render_template,
@@ -5,6 +6,7 @@ from flask import (
     redirect,
     url_for,
     flash,
+    jsonify,
 )
 
 from flask_login import login_required, current_user
@@ -12,6 +14,8 @@ from sqlalchemy import or_
 
 from app.extensions import db
 from app.models import Book, BookTransaction
+from app.services.isbn import ISBNValidationError, normalize_isbn
+from app.services.book_metadata import lookup_book_metadata
 
 
 books_bp = Blueprint(
@@ -22,7 +26,41 @@ books_bp = Blueprint(
 
 
 # =========================================================
+# AUTOMATIC BOOK CODE GENERATOR
+# Generates codes independently for each library.
+# Example: B-001, B-002, B-003
+# =========================================================
+
+def generate_book_code(library_id):
+    """Generate the next available Book Code for a library."""
+
+    existing_codes = db.session.query(
+        Book.book_code
+    ).filter(
+        Book.library_id == library_id,
+        Book.book_code.like("B-%"),
+    ).all()
+
+    highest_number = 0
+
+    for (code,) in existing_codes:
+        if not code:
+            continue
+
+        prefix, separator, suffix = code.rpartition("-")
+
+        if prefix == "B" and separator and suffix.isdigit():
+            highest_number = max(
+                highest_number,
+                int(suffix),
+            )
+
+    return f"B-{highest_number + 1:03d}"
+
+
+# =========================================================
 # BOOK LIST
+# =========================================================
 
 @books_bp.route("/")
 @login_required
@@ -68,7 +106,6 @@ def list_books():
     )
 
 
-
 # =========================================================
 # BOOK OVERVIEW
 # Read-only page used by dashboard
@@ -90,7 +127,6 @@ def books_overview():
     )
 
     if search_query:
-
         search = f"%{search_query}%"
 
         query = query.filter(
@@ -103,7 +139,6 @@ def books_overview():
                 Book.isbn.ilike(search),
             )
         )
-
 
     page = request.args.get("page", 1, type=int)
     per_page = 10
@@ -125,7 +160,48 @@ def books_overview():
 
 
 # =========================================================
+# ISBN METADATA LOOKUP
+# =========================================================
+
+@books_bp.route("/lookup-isbn", methods=["POST"])
+@login_required
+def lookup_isbn():
+    """Fetch book metadata without saving anything to the database."""
+
+    payload = request.get_json(silent=True) or {}
+    isbn = payload.get("isbn", "")
+
+    if not isinstance(isbn, str) or not isbn.strip():
+        return jsonify({
+            "found": False,
+            "message": "Please enter an ISBN first.",
+        }), 400
+
+    try:
+        result = lookup_book_metadata(isbn.strip())
+
+    except ISBNValidationError as exc:
+        return jsonify({
+            "found": False,
+            "message": str(exc),
+        }), 400
+
+    except Exception:
+        # Do not expose internal errors or API credentials to the client.
+        return jsonify({
+            "found": False,
+            "message": (
+                "Unable to look up book details right now. "
+                "Please enter the details manually."
+            ),
+        }), 500
+
+    return jsonify(result), 200
+
+
+# =========================================================
 # ADD BOOK
+# Book Code is generated automatically.
 # =========================================================
 
 @books_bp.route(
@@ -136,11 +212,6 @@ def books_overview():
 def add_book():
 
     if request.method == "POST":
-
-        book_code = request.form.get(
-            "book_code",
-            "",
-        ).strip()
 
         title = request.form.get(
             "title",
@@ -167,6 +238,33 @@ def add_book():
             "",
         ).strip()
 
+        if isbn:
+            try:
+                isbn = normalize_isbn(isbn)
+            except ISBNValidationError as exc:
+                flash(str(exc), "danger")
+                return render_template("books/add.html")
+        # -------------------------------------------------
+        # PREVENT DUPLICATE ISBN IN THE SAME LIBRARY
+        # -------------------------------------------------
+
+        if isbn:
+            existing_book = Book.query.filter_by(
+                library_id=current_user.library_id,
+                isbn=isbn,
+            ).first()
+
+            if existing_book:
+                flash(
+                    "This book already exists in your library. "
+                    "Please edit the existing book to increase its copies.",
+                    "warning",
+                )
+
+                return render_template(
+                    "books/add.html",
+                    existing_book=existing_book,
+                )
         total_copies = request.form.get(
             "total_copies",
             "1",
@@ -176,10 +274,9 @@ def add_book():
         # REQUIRED FIELDS
         # -------------------------------------------------
 
-        if not book_code or not title:
-
+        if not title:
             flash(
-                "Book code and title are required.",
+                "Book title is required.",
                 "danger",
             )
 
@@ -192,13 +289,9 @@ def add_book():
         # -------------------------------------------------
 
         try:
+            total_copies = int(total_copies)
 
-            total_copies = int(
-                total_copies
-            )
-
-        except ValueError:
-
+        except (ValueError, TypeError):
             flash(
                 "Total copies must be a valid number.",
                 "danger",
@@ -209,7 +302,6 @@ def add_book():
             )
 
         if total_copies < 1:
-
             flash(
                 "Total copies must be at least 1.",
                 "danger",
@@ -220,25 +312,12 @@ def add_book():
             )
 
         # -------------------------------------------------
-        # DUPLICATE BOOK CODE
-        # Only within the current library
+        # GENERATE BOOK CODE AUTOMATICALLY
         # -------------------------------------------------
 
-        existing_book = Book.query.filter_by(
-            library_id=current_user.library_id,
-            book_code=book_code,
-        ).first()
-
-        if existing_book:
-
-            flash(
-                "A book with this code already exists.",
-                "danger",
-            )
-
-            return render_template(
-                "books/add.html"
-            )
+        book_code = generate_book_code(
+            current_user.library_id
+        )
 
         # -------------------------------------------------
         # CREATE BOOK
@@ -260,7 +339,7 @@ def add_book():
         db.session.commit()
 
         flash(
-            "Book added successfully.",
+            f"Book added successfully. Book Code: {book_code}",
             "success",
         )
 
@@ -275,6 +354,7 @@ def add_book():
 
 # =========================================================
 # EDIT BOOK
+# Book Code is generated once and cannot be edited here.
 # =========================================================
 
 @books_bp.route(
@@ -294,11 +374,6 @@ def edit_book(book_id):
     ).first_or_404()
 
     if request.method == "POST":
-
-        book_code = request.form.get(
-            "book_code",
-            "",
-        ).strip()
 
         title = request.form.get(
             "title",
@@ -325,6 +400,16 @@ def edit_book(book_id):
             "",
         ).strip()
 
+        if isbn:
+            try:
+                isbn = normalize_isbn(isbn)
+            except ISBNValidationError as exc:
+                flash(str(exc), "danger")
+                return render_template(
+                    "books/edit.html",
+                    book=book,
+                )
+
         total_copies = request.form.get(
             "total_copies",
             "1",
@@ -334,10 +419,9 @@ def edit_book(book_id):
         # REQUIRED FIELDS
         # -------------------------------------------------
 
-        if not book_code or not title:
-
+        if not title:
             flash(
-                "Book code and title are required.",
+                "Book title is required.",
                 "danger",
             )
 
@@ -351,13 +435,9 @@ def edit_book(book_id):
         # -------------------------------------------------
 
         try:
+            total_copies = int(total_copies)
 
-            total_copies = int(
-                total_copies
-            )
-
-        except ValueError:
-
+        except (ValueError, TypeError):
             flash(
                 "Total copies must be a valid number.",
                 "danger",
@@ -369,32 +449,8 @@ def edit_book(book_id):
             )
 
         if total_copies < 1:
-
             flash(
                 "Total copies must be at least 1.",
-                "danger",
-            )
-
-            return render_template(
-                "books/edit.html",
-                book=book,
-            )
-
-        # -------------------------------------------------
-        # DUPLICATE BOOK CODE
-        # Only within the current library
-        # -------------------------------------------------
-
-        existing_book = Book.query.filter(
-            Book.library_id == current_user.library_id,
-            Book.book_code == book_code,
-            Book.id != book.id,
-        ).first()
-
-        if existing_book:
-
-            flash(
-                "Another book with this code already exists.",
                 "danger",
             )
 
@@ -417,7 +473,6 @@ def edit_book(book_id):
         # -------------------------------------------------
 
         if total_copies < issued_copies:
-
             flash(
                 f"Total copies cannot be less than the "
                 f"{issued_copies} currently issued copy/copies.",
@@ -431,9 +486,9 @@ def edit_book(book_id):
 
         # -------------------------------------------------
         # UPDATE BOOK
+        # Book Code is deliberately left unchanged.
         # -------------------------------------------------
 
-        book.book_code = book_code
         book.title = title
         book.author = author or None
         book.publisher = publisher or None
@@ -494,7 +549,6 @@ def delete_book(book_id):
     ).first()
 
     if active_transaction:
-
         flash(
             f"Cannot delete '{book.title}' because it is "
             f"currently issued and has not been returned.",
@@ -522,6 +576,7 @@ def delete_book(book_id):
     )
 
 
+# =========================================================
 # AVAILABLE BOOKS
 # Read-only page used by dashboard
 # =========================================================

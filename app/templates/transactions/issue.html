@@ -1,292 +1,229 @@
+
 {% extends "base.html" %}
 
 {% block title %}Issue Book{% endblock %}
 
 {% block content %}
 
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/issue.css') }}"
+>
+
 <div class="dashboard-container issue-page">
 
-    <!-- =====================================================
-         PAGE HEADER
-    ====================================================== -->
-
-    <div class="page-header">
-
+    <div class="page-header issue-page-header">
         <div>
-
-            <h1>
-                Issue Book
-            </h1>
-
+            <h1>Issue Book</h1>
+            <p class="issue-page-subtitle">
+                Search books, select an employee and issue up to two books.
+            </p>
         </div>
 
-
-        <a
-            href="{{ url_for('main.dashboard') }}"
-            class="btn btn-light"
-        >
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-light issue-dashboard-button">
             <i class="bi bi-arrow-left"></i>
             Dashboard
         </a>
-
     </div>
-
-
-    <!-- =====================================================
-         ISSUE WORKSPACE
-    ====================================================== -->
 
     <div class="issue-workspace">
 
-
-        <!-- =================================================
-             MAIN FORM
-        ================================================== -->
-
+        <!-- LEFT: ISSUE FORM -->
         <div class="dashboard-panel issue-form-panel">
 
             <div class="issue-panel-header">
-
                 <div class="issue-panel-icon">
                     <i class="bi bi-box-arrow-right"></i>
                 </div>
-
                 <div>
-
-                    <h2>
-                        Details
-                    </h2>
-
+                    <h2>Issue Details</h2>
+                    <p>Select books and complete the loan details.</p>
                 </div>
-
             </div>
-
 
             <form
                 method="POST"
                 class="issue-form"
-            >
+                id="issue_book_form"
+                data-today="{{ today }}"
+                data-isbn-lookup-url="{{ url_for('transactions.lookup_issue_isbn') }}">
 
+                {% if csrf_token is defined %}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {% endif %}
 
-                <!-- =============================================
-                     EMPLOYEE
-                ============================================== -->
+                <!-- BOOK SEARCH -->
+                <div class="issue-book-search">
 
-                <div class="issue-form-section">
+                    <label for="issue_book_search" class="issue-form-label">
+                        Search book or scan ISBN
+                    </label>
 
-                    <div class="issue-section-heading">
-
-                        <span class="issue-section-number">
-                            01
-                        </span>
-
-                        <div>
-
-                            <h3>
-                                Employee <span>*</span>
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                    <div class="issue-input-wrapper">
-    <select
-        id="employee_id"
-        name="employee_id"
-        class="issue-select searchable-select"
-        autocomplete="off"
-        required
-    >
-        <option value="" selected></option>
-
-        {% for employee in employees %}
-        <option value="{{ employee.id }}">
-            {{ employee.employee_code }}
-            -
-            {{ employee.name }}
-            {% if employee.status != "ACTIVE" %}
-                ({{ employee.status }})
-            {% endif %}
-        </option>
-        {% endfor %}
-    </select>
-</div>
-
-                </div>
-
-
-                <!-- =============================================
-                     BOOK
-                ============================================== -->
-
-                <div class="issue-form-section">
-
-                    <div class="issue-section-heading">
-
-                        <span class="issue-section-number">
-                            02
-                        </span>
-
-                        <div>
-
-                            <h3>
-                                Book <span>*</span>
-                            </h3>
-
-                        </div>
-
-                    </div>
-
-                    <div class="issue-input-wrapper">
-
-                        <select
-                            id="book_id"
-                            name="book_id"
-                            class="issue-select searchable-select"
-                            
+                    <div class="issue-book-search-row">
+                        <input
+                            type="text"
+                            id="issue_book_search"
+                            class="issue-input"
+                            placeholder="Type a title, book code or ISBN..."
                             autocomplete="off"
-                            required
-                        >
+                            aria-controls="issue_search_results">
 
-                            <option value="">
-                                
-                            </option>
-
-
-                            {% for book in books %}
-
-                            <option
-                                value="{{ book.id }}"
-                            >
-                                {{ book.book_code }}
-                                -
-                                {{ book.title }}
-                                -
-                                {{ book.available_copies }}
-                                available
-                            </option>
-
-                            {% endfor %}
-
-                        </select>
-
+                        <button
+                            type="button"
+                            id="issue_camera_start"
+                            class="btn issue-scan-button">
+                            <i class="bi bi-camera"></i>
+                            Scan barcode
+                        </button>
                     </div>
 
+                    <!-- CAMERA -->
+                    <div id="issue_camera_panel" class="issue-camera-panel" hidden>
+                        <div id="issue_isbn_camera" class="issue-camera-frame"></div>
+
+                        <p class="issue-camera-help">
+                            Align the book's barcode inside the frame.
+                        </p>
+
+                        <button
+                            type="button"
+                            id="issue_camera_stop"
+                            class="btn btn-sm btn-light">
+                            <i class="bi bi-stop-circle"></i>
+                            Stop camera
+                        </button>
+                    </div>
+
+                    <!-- STATUS -->
+                    <div
+                        id="issue_book_status"
+                        class="issue-book-status"
+                        role="status"
+                        aria-live="polite"></div>
+
+                    <!-- SEARCH RESULTS -->
+                    <div
+                        id="issue_search_results"
+                        class="issue-search-results"
+                        role="listbox"
+                        aria-label="Available books"
+                        hidden></div>
+
+                    <!-- SELECTED SEARCH RESULT -->
+                    <div id="issue_candidate_panel" class="issue-candidate-panel" hidden>
+                        <div class="issue-candidate-heading">Selected search result</div>
+
+                        <h4 id="candidate_book_title"></h4>
+                        <p id="candidate_book_code"></p>
+                        <p id="candidate_book_isbn"></p>
+                        <p id="candidate_book_availability"></p>
+
+                        <div class="issue-candidate-actions">
+                            <button type="button" id="issue_add_book" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i>
+                                Add Book
+                            </button>
+
+                            <button type="button" id="issue_cancel_candidate" class="btn btn-light">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- HIDDEN BOOK IDS -->
+                    <div id="issue_selected_book_ids" class="issue-selected-hidden-inputs"></div>
                 </div>
 
-
-                <!-- =============================================
-                     DATES
-                ============================================== -->
-
+                <!-- EMPLOYEE -->
                 <div class="issue-form-section">
-
                     <div class="issue-section-heading">
-
-                        <span class="issue-section-number">
-                            03
-                        </span>
-
+                        <span class="issue-section-number">02</span>
                         <div>
-
-                            <h3>
-                                Loan Period <span>*</span>
-                            </h3>
-
+                            <h3>Employee <span>*</span></h3>
+                            <p>Select the employee receiving the books.</p>
                         </div>
-
                     </div>
 
+                    <div class="issue-input-wrapper">
+                        <select
+                            id="employee_id"
+                            name="employee_id"
+                            class="issue-select searchable-select"
+                            autocomplete="off"
+                            required>
+
+                            <option value="" selected></option>
+
+                            {% for employee in employees %}
+                                {% if employee.status == "ACTIVE" %}
+                                    <option value="{{ employee.id }}">
+                                        {{ employee.employee_code }} - {{ employee.name }}
+                                    </option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- LOAN PERIOD -->
+                <div class="issue-form-section">
+                    <div class="issue-section-heading">
+                        <span class="issue-section-number">03</span>
+                        <div>
+                            <h3>Loan Period <span>*</span></h3>
+                            <p>Set the due date for the issued books.</p>
+                        </div>
+                    </div>
 
                     <div class="issue-date-grid">
-
-
-                        <!-- Issue Date -->
-
-                        <div>
-
-                            <label
-                                for="issue_date"
-                                class="issue-form-label"
-                            >
-                                Issue Date
-                                <span>*</span>
+                        <div class="issue-date-field">
+                            <label for="issue_date" class="issue-form-label">
+                                Issue Date <span>*</span>
                             </label>
 
-
                             <div class="issue-input-wrapper">
-
                                 <i class="bi bi-calendar3"></i>
-
                                 <input
                                     type="date"
                                     id="issue_date"
-                                    name="issue_date"
                                     value="{{ today }}"
                                     class="issue-input"
-                                    required
-                                >
-
+                                    readonly
+                                    aria-readonly="true">
                             </div>
 
+                            <small class="text-muted">
+                                Automatically set to today's date.
+                            </small>
                         </div>
 
-
-                        <!-- Due Date -->
-
-                        <div>
-
-                            <label
-                                for="due_date"
-                                class="issue-form-label"
-                            >
-                                Due Date
-                                <span>*</span>
+                        <div class="issue-date-field">
+                            <label for="due_date" class="issue-form-label">
+                                Due Date <span>*</span>
                             </label>
 
-
                             <div class="issue-input-wrapper">
-
                                 <i class="bi bi-calendar-check"></i>
-
                                 <input
                                     type="date"
                                     id="due_date"
                                     name="due_date"
+                                    min="{{ today }}"
                                     class="issue-input"
-                                    required
-                                >
-
+                                    required>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
 
-
-                <!-- =============================================
-                     REMARKS
-                ============================================== -->
-
+                <!-- REMARKS -->
                 <div class="issue-form-section">
-
                     <div class="issue-section-heading">
-
-                        <span class="issue-section-number">
-                            04
-                        </span>
-
+                        <span class="issue-section-number">04</span>
                         <div>
-
-                            <h3>
-                                Remarks
-                            </h3>
-
+                            <h3>Remarks</h3>
+                            <p>Optional notes about this issue transaction.</p>
                         </div>
-
                     </div>
 
                     <textarea
@@ -294,151 +231,109 @@
                         name="remarks"
                         class="issue-textarea"
                         rows="4"
-                        placeholder="Add remarks if required..."
-                    ></textarea>
-
+                        placeholder="Add remarks if required..."></textarea>
                 </div>
 
-
-                <!-- =============================================
-                     ACTIONS
-                ============================================== -->
-
+                <!-- ACTIONS -->
                 <div class="issue-form-actions">
-
                     <a
-                        href="{{ url_for('main.index') }}"
-                        class="btn btn-light issue-cancel-button"
-                    >
+                        href="{{ url_for('main.dashboard') }}"
+                        class="btn btn-light issue-cancel-button">
                         Cancel
                     </a>
 
-
                     <button
                         type="submit"
-                        class="btn btn-primary issue-submit-button"
-                    >
+                        id="issue_submit_button"
+                        class="btn btn-primary issue-submit-button">
                         <i class="bi bi-check-circle"></i>
-                        Issue Book
+                        Issue Selected Books
                     </button>
-
                 </div>
 
             </form>
-
         </div>
 
-
-        <!-- =================================================
-             SIDE INFORMATION PANEL
-        ================================================== -->
-
+        <!-- RIGHT: SELECTED BOOKS -->
         <aside class="issue-info-panel">
 
-            <!-- Important Information -->
+            <section class="issue-selected-panel">
+                <div class="issue-selected-panel-header">
+                    <div>
+                        <h3>
+                            <i class="bi bi-book-half"></i>
+                            Selected Books
+                        </h3>
+                        <p id="issue_selection_count">0 of 2 books selected</p>
+                    </div>
+
+                    <button
+                        type="button"
+                        id="issue_clear_all_books"
+                        class="btn btn-sm btn-light"
+                        disabled>
+                        Clear all
+                    </button>
+                </div>
+
+                <div
+                    id="issue_selected_books"
+                    class="issue-selected-list"
+                    aria-live="polite"></div>
+
+                <p id="issue_selected_empty" class="issue-selected-empty">
+                    Added books will appear here.
+                </p>
+            </section>
 
             <div class="issue-help-card">
-
                 <div class="issue-help-icon">
                     <i class="bi bi-lightbulb"></i>
                 </div>
 
-
                 <div>
-
-                    <h3>
-                        Before issuing
-                    </h3>
-
+                    <h3>Before issuing</h3>
                     <ul>
-
-                        <li>
-                            Make sure the employee is active.
-                        </li>
-
-                        <li>
-                            Confirm that the selected book has
-                            available copies.
-                        </li>
-
-                        <li>
-                            Verify the due date before submitting.
-                        </li>
-
+                        <li>Select up to two different books.</li>
+                        <li>Click Add Book for each selected result.</li>
+                        <li>Confirm that copies are available.</li>
+                        <li>Select an active employee.</li>
+                        <li>Verify the due date before submitting.</li>
+                        <li>Both books will be submitted together.</li>
                     </ul>
-
                 </div>
-
             </div>
 
         </aside>
-
     </div>
-
 </div>
 
-
-<!-- =========================================================
-     TOM SELECT
-========================================================= -->
-
+<!-- EXTERNAL LIBRARIES -->
 <link
     href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.bootstrap5.min.css"
-    rel="stylesheet"
->
-
+    rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const employeeSelect = document.getElementById("employee_id");
-    const bookSelect = document.getElementById("book_id");
-
-    if (employeeSelect) {
-        new TomSelect(employeeSelect, {
-            create: false,
-            allowEmptyOption: true,
-            maxOptions: 500,
-
-            searchField: ["text"],
-
-            sortField: {
-                field: "text",
-                direction: "asc"
-            },
-
-            closeAfterSelect: true,
-
-            plugins: [
-                "clear_button"
-            ]
-        });
-    }
-
-    if (bookSelect) {
-        new TomSelect(bookSelect, {
-            create: false,
-            allowEmptyOption: true,
-            maxOptions: 500,
-
-            searchField: ["text"],
-
-            sortField: {
-                field: "text",
-                direction: "asc"
-            },
-
-            closeAfterSelect: true,
-
-            plugins: [
-                "clear_button"
-            ]
-        });
-    }
-
-});
+<!-- AVAILABLE BOOKS FROM THE FLASK VIEW -->
+<script id="available-books-data" type="application/json">
+[
+{% set comma = namespace(first=true) %}
+{% for book in books if book.available_copies > 0 %}
+{% if not comma.first %},{% endif %}
+{
+    "id": {{ book.id | tojson }},
+    "title": {{ book.title | tojson }},
+    "book_code": {{ book.book_code | tojson }},
+    "isbn": {{ (book.isbn or "") | tojson }},
+    "available_copies": {{ book.available_copies | tojson }}
+}
+{% set comma.first = false %}
+{% endfor %}
+]
 </script>
+
+<script src="{{ url_for('static', filename='js/issue.js') }}" defer></script>
+
 {% endblock %}

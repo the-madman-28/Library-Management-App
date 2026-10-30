@@ -1,3 +1,4 @@
+
 from datetime import datetime, timezone
 
 from app.extensions import db
@@ -75,19 +76,14 @@ class Employee(db.Model):
         onupdate=lambda: datetime.now(timezone.utc)
     )
 
-    # -----------------------------------------------------
-    # LIBRARY RELATIONSHIP
-    # -----------------------------------------------------
-
+    # Library relationship
     library = db.relationship(
         "Library",
         back_populates="employees"
     )
 
-    # -----------------------------------------------------
-    # ACTIVE BOOK TRANSACTIONS
-    # -----------------------------------------------------
-
+    # Active book transactions
+    # One employee can have multiple active book transactions.
     transactions = db.relationship(
         "BookTransaction",
         back_populates="employee",
